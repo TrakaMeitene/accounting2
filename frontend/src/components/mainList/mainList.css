@@ -1,0 +1,154 @@
+.leftContainer {
+    position: absolute;
+    top: 2px;
+    left: 0px;
+    width: 103px;
+    height: 100vh;
+    background: hsl(236, 30%, 17%);
+    border-radius: 4px;
+    box-shadow: 0px 0px 1px #171a1f, 0px 0px 2px #171a1f;
+    display: flex;
+    flex-direction: column;
+align-items: center;
+}
+
+.black{
+    color: black !important;
+}
+section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 80vw;
+   height: 90vh;
+}
+
+.header{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+align-items: center;
+    width: 57%;
+top: 70px;
+}
+
+body{
+    height:auto;
+}
+
+.text {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 48px;
+    color: #FFFFFFFF;
+}
+
+.new {
+    padding-right: 10px;
+    width: 180px;
+    height: 50px;
+    border: none;
+    cursor: pointer;
+    background: #876FF3FF;
+    border-radius: 50px;
+    box-shadow: 0px 0px 1px #171a1f, 0px 0px 2px #171a1f;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    color: white;
+    font-family: 'Josefin Sans', sans-serif;
+    font-weight: bold;
+}
+
+.new:hover{
+    background-color: #9277ff;
+}
+
+.new div {
+    background-color: white;
+    height: 40px;
+    width: 40px;
+    font-family: 'Times New Roman', Times, serif;
+    border-radius: 50%;
+    color: #876FF3FF;
+    font-size: 35px;
+
+}
+
+.tr{
+    width: 100%;
+    height: 73px;
+    background: hsl(236, 30%, 17%);
+    color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.tr:hover{
+    border: 1px solid #876FF3FF;
+}
+
+
+.light{
+    background-color: hsl(0, 0%, 100%) !important;
+    color: black !important;
+}
+
+
+.td{
+    padding: 10px 20px;
+    font-weight:500;
+flex: 1;
+}
+
+.table {
+    border-spacing: 0 10px;
+    display: flex;
+    flex-direction: column;
+    height: 60%;
+}
+.p-paginator{
+    background: hsl(236, 30%, 17%);
+}
+
+.paid{
+    color: hsl(169, 37%, 52%);
+    background-color: hsl(169, 37%, 52%,  8%);
+}
+
+.pending{
+    color: hsl(33, 100%, 50%);
+    background-color: hsl(33, 100%, 50%, 8%);
+}
+
+.paid, .pending{
+    width: auto;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.flex{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom:20px;
+}
+.delete-listitem{
+    height: 30px;
+    background-color: rgb(199, 90, 67);
+    border:none;
+    color: white !important;
+    border-radius: 10px;
+text-transform: uppercase;
+font-size: 12px;
+margin-left:15px;
+cursor: pointer;
+}
