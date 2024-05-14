@@ -11,17 +11,19 @@ import { Button } from 'primereact/button';
 import { FaEnvelope } from "react-icons/fa";
 import { Card } from 'primereact/card';
 import { CiFacebook } from "react-icons/ci";
-
+import Profile from './components/profile.jsx/profile.jsx';
 
 function App() {
+
+
   const [signedin, setSigned] = useState(false)
   const [value, setValue] = useState("")
   const [success, setSuccess] = useState(false)
 
-
   const query = new URLSearchParams(window.location.search);
   const token = query.get('t')
   const code = query.get("code")
+
 
   useEffect(() => {
     if (token !== null) {
@@ -33,12 +35,11 @@ function App() {
   }, [token, code])
 
 
-
   const signin = (e) => {
     e.preventDefault()
     const data = { "email": value }
 
-    axios.post("http://localhost:3300/sign", data, { withCredentials: true })
+    ("http://localhost:3300/sign", data, { withCredentials: true })
       .then(response => {
         if (response.data.message === "success") {
           setSuccess(true)

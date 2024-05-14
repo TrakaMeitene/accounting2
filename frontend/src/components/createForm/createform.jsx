@@ -62,12 +62,11 @@ export default function CreateForm({ close, selection }) {
             })
     }
 
-console.log("issues")
     const closing = (isDirty) => {
-
+        console.log(isDirty === "")
         setanim(true)
         setTimeout(() => {
-            close(isDirty)
+            close(isDirty === "" ? isDirty : undefined)
         }, 400)
     }
 
@@ -208,11 +207,11 @@ console.log("issues")
 
                 <form onSubmit={handleSubmit(onSubmit)} className="form" >
                     <div className="flex-row">
-                        <span>
+                        <span className="inrow">
                             <label htmlFor="documentNr">Dokumenta numurs</label>
                             <InputText className="p-inputtext-sm" style={{ width: 200 }} id="documentNr" value={forma.documentNr} onChange={(e) => setform({ ...forma, documentNr: e.target.value })} />
                         </span>
-                        <span>
+                        <span className="inrow">
                             <label htmlFor="buttondisplay" className="font-bold block mb-2">
                                 Datums
                             </label>
@@ -227,11 +226,11 @@ console.log("issues")
                     <h2 >Partneris</h2>
                     <hr />
                     <div className="flex-row">
-                        <span>
+                        <span className="inrow">
                             <label htmlFor="company">Nosaukums</label>
                             <InputText className="p-inputtext-sm" style={{ width: 200 }} id="company" value={forma.Company} onChange={(e) => setform({ ...forma, Company: e.target.value })} />
                         </span>
-                        <span>
+                        <span className="inrow">
                             <label htmlFor="companyReg">Reģistrācijas numurs</label>
                             <InputText className="p-inputtext-sm" style={{ width: 300 }} id="companyReg" value={forma.CompanyReg} onChange={(e) => setform({ ...forma, CompanyReg: e.target.value })} />
                         </span>
@@ -245,22 +244,22 @@ console.log("issues")
                         </span>
                     </div>
                     <div className="flex-row">
-                        <span>
+                        <span className="inrow">
                             <label htmlFor="companybank">Klienta bankas konts</label>
                             <InputText className="p-inputtext-sm" style={{ width: 200 }} id="companybank" value={forma.bank} onChange={(e) => setform({ ...forma, bank: e.target.value })} />
                         </span>
-                        <span>
+                        <span className="inrow">
                             <label htmlFor="companyadress">Juridiskā adrese</label>
 
                             <InputText className="p-inputtext-sm" style={{ width: 300 }} id="companyadress" value={forma.adress} onChange={(e) => setform({ ...forma, adress: e.target.value })} />
                         </span>
                     </div>
                     <div className="flex-row">
-                        <span>
+                        <span className="inrow">
                             <label htmlFor="email">E-pasts </label>
                             <InputText className="p-inputtext-sm" type="email" style={{ width: 250 }} id="email" value={forma.email} onChange={(e) => setform(forma => ({ ...forma, email: e.target.value }))} />
                         </span>
-                        <span>
+                        <span className="inrow">
                             <label htmlFor="phone">Tālrunis</label>
                             <InputText className="p-inputtext-sm" style={{ width: 200 }} id="phone" value={forma.phone} onChange={(e) => setform({ ...forma, phone: e.target.value })} />
                         </span>
@@ -301,7 +300,7 @@ console.log("issues")
                         <InputNumber className="p-inputtext-sm" currency="EUR" mode="currency" id="total" value={summ ? summ : forma.total} disabled />
                     </div>
                     <br />
-                    <div className="flex-auto">
+                    <div className="flex-auto row2">
                         <span className="margin">
                             <label htmlFor="payd" className="ml-2">Apmaksāts</label>
                             <RadioButton inputId="payd" name="payd" value={0} checked={payd === 0} onChange={(e) => setPayd(e.value)} />
@@ -311,7 +310,7 @@ console.log("issues")
                             <RadioButton inputId="payd-not" name="payd" value={1} checked={payd === 1} onChange={(e) => setPayd(e.value)} />
                         </span>
                     </div>
-                    <div className="flex-row">
+                    <div className="flex-row row2">
 
                         <Button label="IZVEIDOT" type="submit" />
                         <Button label="ATCELT" type="button" severity="secondary" outlined onClick={closing} />

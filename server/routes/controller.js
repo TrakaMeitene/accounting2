@@ -6,8 +6,23 @@ var bodyParser = require('body-parser')
 import DescopeClient from '@descope/node-sdk';
 const cookieParser = require('cookie-parser');
 router.use(cookieParser());
-
+const { jsPDF } = require("jspdf");
+import autoTable from 'jspdf-autotable'
 import pool from "../db.js";
+var PdfPrinter = require('pdfmake');
+// var PdfPrinter = require('../src/printer');
+var fs = require('fs');
+
+
+var fonts = {
+  Roboto: {
+    //normal: 'fonts/Parisienne-Regular.ttf',
+    //normal: 'fonts/Lovelo Line Light.otf',
+    normal: "fonts/Inter-VariableFont_slnt,wght.ttf"
+  }
+};
+
+var printer = new PdfPrinter(fonts);
 
 router.use(function (req, res, next) {
   res.header("Content-Type", "application/json");
@@ -17,6 +32,8 @@ router.use(function (req, res, next) {
   res.header("Access-Control-Allow-Credentials", true)
   next();
 });
+
+
 const descopeClient = DescopeClient({ projectId: process.env.PROJECTID, managementKey: process.env.MGKEY });
 
 router.use(bodyParser.json())
@@ -56,7 +73,7 @@ router.post("/social", async (req, res) => {
       "templateOptions": { "option": "Value1" }
     }
     const re = await descopeClient.oauth.start[provider](redirectURL, loginOptions);
-    console.log(re)
+
     if (re.ok) {
       res.send(re.data.url)
     }
@@ -172,19 +189,18 @@ router.post("/update", async (req, res) => {
     let products = ""
 
     const update = await pool.query("UPDATE invoices SET comments=?, company=?, adress=?, bank=?, date=?, documentNr=?, email=?, payd=?, paytill=?, phone=?, total=?, registration=?  WHERE id=?", [data.Comment, data.Company, data.adress, data.bank, new Date(data.date), data.documentNr, data.email, data.payd, new Date(data.paytill), data.phone, data.total, data.CompanyReg, data.selection])
-
     //check for deleted products
     const allproducts = await pool.query('SELECT * from products where invoiceId=?', [data.products[0].invoiceId])
-    const allproductids= []
+    const allproductids = []
     const invoiceprod = []
 
-    allproducts.map(x=> allproductids.push(x.id))
-    data.products.map(x=> invoiceprod.push(x.id))
-    var checkfordeleted = allproductids.filter(function(item) {
+    allproducts.map(x => allproductids.push(x.id))
+    data.products.map(x => invoiceprod.push(x.id))
+    var checkfordeleted = allproductids.filter(function (item) {
       return !invoiceprod.includes(item)
     })
-    if(checkfordeleted.length >0){
-   await pool.query('DELETE from products where id IN (?)', [checkfordeleted])
+    if (checkfordeleted.length > 0) {
+      await pool.query('DELETE from products where id IN (?)', [checkfordeleted])
     }
 
     for (let i = 0; i < data.products.length; i++) {
@@ -194,9 +210,9 @@ router.post("/update", async (req, res) => {
       } else {
         products = await pool.query("INSERT into products (invoiceId, name, unit, price, count) values (?,?,?,?,?) ", [data.selection, data.products[i].name, data.products[i].unit, data.products[i].price, data.products[i].count])
         products.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
-        }
+      }
     }
-    
+
   }
   catch (err) {
     console.log(err)
@@ -208,16 +224,127 @@ router.get("/user", async (req, res) => {
   res.send(user?.picture)
 })
 
+router.post("/userdata", async (req, res) => {
+  let errorMsg = { message: "Kaut kas nogāja greizi. Mēģini vēlreiz", status: "error" }
+
+  const user = req.cookies.user.userId
+  const data = req.body.userdata
+  const checkifexists = await pool.query("SELECT * from usersettings where userid=?", [user])
+  if (checkifexists.length === 1) {
+    const userupdate = await pool.query("UPDATE usersettings SET name=?, surname=?, email=?, personalnr=?, adress=?, bank=?", [data.name, data.surname, data.email, data.personalnr, data.adress, data.bank])
+    return userupdate.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
+
+  }
+  const userinsert = await pool.query("INSERT into usersettings (userid, name, surname, email, personalnr, adress, bank ) values (?,?,?,?,?, ?,?) ", [user, data.name, data.surname, data.email, data.personalnr, data.adress, data.bank])
+  userinsert.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
+})
+
+router.get("/getuserdata", async (req, res) => {
+  try {
+    const user = req.cookies.user.userId
+    const getuser = await pool.query("SELECT * from usersettings where userid=?", [user])
+    res.send(getuser)
+  }
+  catch (err) {
+    res.send(err)
+    console.log(err)
+  }
+})
+
 
 router.delete('/deleteinvoice', async (req, res) => {
   const id = req.query.id
-  console.log(id)
   const result = await pool.query("DELETE from invoices where id=? ", [id])
   if (result.affectedRows >= 1) {
     res.send("ok")
   } else {
     res.send("error")
   }
+})
+
+router.get("/createpdf/:selection", async (req, res) => {
+  const id = req.params.selection
+  const user = req.cookies.user.userId
+
+  const invoice = await pool.query('SELECT * from invoices where id=?', [id])
+  const usersetings = await pool.query('SELECT * from usersettings where userid=?', [user])
+  const products = await pool.query('SELECT * from products where invoiceId=?', [id])
+
+  const tabledata = []
+
+  var header = [{ text: 'Nosaukums', style: 'tableHeader' }, { text: 'Cena', style: 'tableHeader' }, { style: 'tableHeader', text: 'Skaits' }, { text: 'Mērvienība', style: 'tableHeader' }, { text: 'Kopā', style: 'tableHeader' }];
+
+  tabledata.push(header)
+  products.map((x, i) => {
+    tabledata.push([products[i].name, Number(products[i].price).toFixed(2).toString(), String(products[i].count), products[i].unit, Number(products[i].price * products[i].count).toFixed(2).toString()])
+  })
+
+  var docDefinition = {
+    content: [
+      {
+        table: {
+          widths: [200, 200],
+          style: 'tableExample',
+          headerRows: 1,
+          body: [
+            ["Rēķina numurs", invoice[0].documentNr],
+           ["Rēķina datums", new Date(invoice[0].date).toISOString().slice(0,10).toString()],
+            ["Rēkina apmaksas termiņš", new Date(invoice[0].paytill).toISOString().slice(0,10).toString()],
+            ["Klients", invoice[0].company],
+            ["Reģistrācijas numurs", invoice[0].registration],
+            ["Adrese", invoice[0].adress]
+          ]
+        },
+        layout: 'noBorders'
+
+      },
+
+      { text: 'Produkti/pakalpojumi', fontSize: 14, normal: true, margin: [0, 20, 0, 8] },
+      {
+        table: {
+          widths: [150, 50, 50, 100, 90],
+          style: 'tableExample',
+          headerRows: 1,
+          body:
+            tabledata.map(x => x)
+        },
+        layout: 'lightHorizontalLines',
+      },
+      {
+        table: {
+          body:
+          [
+            ["Summa apmaksai", Number(invoice[0].total).toFixed(2).toString()] ,
+          ]
+        },
+        margin: [300, 0, 0, 0],
+        alignment: 'right',
+        layout: 'lightHorizontalLines',
+
+      },
+      { text: 'Norēķinu rekvizīti', fontSize: 14, normal: true, margin: [0, 20, 0, 8] },
+
+      {
+        table: {
+          widths: [200, 200],
+          style: 'tableExample',
+          headerRows: 1,
+          body: [
+            ["Piegādātājs", usersetings[0].name + usersetings[0].surname],
+           ["Reģistrācijas numurs", usersetings[0].personalnr],
+            ["Adrese", usersetings[0].adress],
+            ["Bankas numurs", usersetings[0].bank]
+          ]
+        },
+        layout: 'noBorders'
+      }
+    ]
+  };
+
+  const pdfDoc = printer.createPdfKitDocument(docDefinition);
+  res.contentType('application/pdf');
+  pdfDoc.pipe(res);
+  pdfDoc.end();
 })
 
 router.get("/logout", async (req, res) => {

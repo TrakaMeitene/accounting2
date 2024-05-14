@@ -121,3 +121,47 @@ label:not(.nomargin){
 
     to   {  width: 0px;}  
   }
+
+  @media screen and (max-width: 1000px) {
+    .create{
+        width: 100vw;
+        left: 0;
+        height: 100vh;
+    }
+
+    form{
+        width: 100vw;
+    }
+
+    #comment{
+        width: 90vw !important;
+    }
+.flex-row{
+    flex-direction: column;
+    align-items: flex-start;
+    width: 90vw;
+    height: auto;
+}
+
+.inrow{
+    display:flex;
+    flex-direction: column;
+ margin-bottom: 20px;
+}
+
+.flex-1, .flex-auto{
+    display:flex;
+    flex-direction: column;
+}
+
+
+.row2{
+    flex-direction: row !important;
+    margin-top: 20px;
+}
+
+.p-inputnumber{
+    max-width: 120px;
+}
+
+  }

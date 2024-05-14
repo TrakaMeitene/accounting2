@@ -12,9 +12,12 @@
     "dotenv": "^16.4.5",
     "esm": "^3.2.25",
     "express": "^4.18.2",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "mariadb": "^3.3.0",
     "node-fetch": "^2.6.7",
-    "passport-descope": "^1.0.0"
+    "passport-descope": "^1.0.0",
+    "pdfmake": "^0.2.10"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
