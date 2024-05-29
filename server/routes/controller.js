@@ -12,7 +12,23 @@ import pool from "../db.js";
 var PdfPrinter = require('pdfmake');
 // var PdfPrinter = require('../src/printer');
 var fs = require('fs');
+router.use('/uploads', express.static('uploads'))
+const multer = require("multer");
 
+
+const upload = multer({
+  dest: "uploads",
+  limits: { fileSize: 2000000 },
+  files: 2,
+  filename: function (req, file, cb) {
+    // this overwrites the default multer renaming callback
+    // and simply saves the file as it is
+    cb(null, file.originalname),
+      cb(new Error("File is too big"))
+
+  }
+  // you might also want to set some limits: https://github.com/expressjs/multer#limits
+});
 
 var fonts = {
   Roboto: {
@@ -224,14 +240,25 @@ router.get("/user", async (req, res) => {
   res.send(user?.picture)
 })
 
-router.post("/userdata", async (req, res) => {
+router.post("/userdata", 
+  upload.single("img"), async (req, res) => {
   let errorMsg = { message: "Kaut kas nogāja greizi. Mēģini vēlreiz", status: "error" }
 
   const user = req.cookies.user.userId
-  const data = req.body.userdata
+  const data = req.body
+  console.log(req.file, req.body)
   const checkifexists = await pool.query("SELECT * from usersettings where userid=?", [user])
+
+  let rows = "name=?, surname=?, email=?, personalnr=?, adress=?, bank=?"
+  const dependencies = [data.name, data.surname, data.email, data.personalnr, data.adress, data.bank]
+
+  if(req.file){
+    rows = rows.concat(", file=?")
+    dependencies.splice(6, 0, '/uploads/' + req.file.filename)
+  }
+console.log(dependencies, rows)
   if (checkifexists.length === 1) {
-    const userupdate = await pool.query("UPDATE usersettings SET name=?, surname=?, email=?, personalnr=?, adress=?, bank=?", [data.name, data.surname, data.email, data.personalnr, data.adress, data.bank])
+    const userupdate = await pool.query(`UPDATE usersettings SET ${rows}`, dependencies)
     return userupdate.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
 
   }
@@ -253,7 +280,8 @@ router.get("/getuserdata", async (req, res) => {
 
 
 router.delete('/deleteinvoice', async (req, res) => {
-  const id = req.query.id
+  const id = req.query.itemtoremove
+
   const result = await pool.query("DELETE from invoices where id=? ", [id])
   if (result.affectedRows >= 1) {
     res.send("ok")
@@ -272,37 +300,44 @@ router.get("/createpdf/:selection", async (req, res) => {
 
   const tabledata = []
 
-  var header = [{ text: 'Nosaukums', style: 'tableHeader' }, { text: 'Cena', style: 'tableHeader' }, { style: 'tableHeader', text: 'Skaits' }, { text: 'Mērvienība', style: 'tableHeader' }, { text: 'Kopā', style: 'tableHeader' }];
+  var header = [{ text: 'Nosaukums', style: 'tableHeader' }, { text: 'Cena', style: 'tableHeader' }, { style: 'tableHeader', text: 'Skaits', width: '40px' }, { text: 'Mērvienība', style: 'tableHeader' }, { text: 'Kopā', style: 'tableHeader' }];
 
   tabledata.push(header)
   products.map((x, i) => {
-    tabledata.push([products[i].name, Number(products[i].price).toFixed(2).toString(), String(products[i].count), products[i].unit, Number(products[i].price * products[i].count).toFixed(2).toString()])
+    tabledata.push([products[i].name, Number(products[i].price).toFixed(2).toString() + " EUR", String(products[i].count), products[i].unit, Number(products[i].price * products[i].count).toFixed(2).toString() + " EUR"])
   })
 
   var docDefinition = {
     content: [
       {
+      columns: [
+        {
+          image: './files/frogit.png',
+          width: 200
+        }
+      ],
+    },
+      {
         table: {
           widths: [200, 200],
-          style: 'tableExample',
-          headerRows: 1,
+          headerRows: 2,
+
           body: [
-            ["Rēķina numurs", invoice[0].documentNr],
-           ["Rēķina datums", new Date(invoice[0].date).toISOString().slice(0,10).toString()],
-            ["Rēkina apmaksas termiņš", new Date(invoice[0].paytill).toISOString().slice(0,10).toString()],
+            [{ text: "Rēķina numurs", style: 'tableHeader' }, invoice[0].documentNr],
+            ["Rēķina datums", new Date(invoice[0].paytill).toLocaleDateString("de-DE")],
+            ["Rēkina apmaksas termiņš", new Date(invoice[0].paytill).toLocaleDateString("de-DE")],
             ["Klients", invoice[0].company],
             ["Reģistrācijas numurs", invoice[0].registration],
             ["Adrese", invoice[0].adress]
           ]
         },
-        layout: 'noBorders'
-
-      },
-
+        layout: 'noBorders',
+        margin: [0, 20, 20, 20]
+    },
       { text: 'Produkti/pakalpojumi', fontSize: 14, normal: true, margin: [0, 20, 0, 8] },
       {
         table: {
-          widths: [150, 50, 50, 100, 90],
+          widths: [150, "auto", "auto", 100, 90],
           style: 'tableExample',
           headerRows: 1,
           body:
@@ -313,13 +348,14 @@ router.get("/createpdf/:selection", async (req, res) => {
       {
         table: {
           body:
-          [
-            ["Summa apmaksai", Number(invoice[0].total).toFixed(2).toString()] ,
-          ]
+            [
+              ["", ""],
+              ["Summa apmaksai", Number(invoice[0].total).toFixed(2).toString() + " EUR"],
+            ]
         },
-        margin: [300, 0, 0, 0],
+        margin: [300, 20, 0, 0],
         alignment: 'right',
-        layout: 'lightHorizontalLines',
+        layout: 'noBorders',
 
       },
       { text: 'Norēķinu rekvizīti', fontSize: 14, normal: true, margin: [0, 20, 0, 8] },
@@ -328,23 +364,27 @@ router.get("/createpdf/:selection", async (req, res) => {
         table: {
           widths: [200, 200],
           style: 'tableExample',
+          fontSize: '12px',
           headerRows: 1,
           body: [
             ["Piegādātājs", usersetings[0].name + usersetings[0].surname],
-           ["Reģistrācijas numurs", usersetings[0].personalnr],
+            ["Reģistrācijas numurs", usersetings[0].personalnr],
             ["Adrese", usersetings[0].adress],
             ["Bankas numurs", usersetings[0].bank]
           ]
         },
-        layout: 'noBorders'
-      }
-    ]
-  };
+        layout: 'noBorders',
+        margin: [0, 20, 20, 20]
 
-  const pdfDoc = printer.createPdfKitDocument(docDefinition);
-  res.contentType('application/pdf');
-  pdfDoc.pipe(res);
-  pdfDoc.end();
+      },
+      { text: 'Dokuments ir sagatavots elektroniski un ir derīgs bez paraksta.', fontSize: 9, normal: true, margin: [0, 20, 0, 8] },
+    ]
+};
+
+const pdfDoc = printer.createPdfKitDocument(docDefinition);
+res.contentType('application/pdf');
+pdfDoc.pipe(res);
+pdfDoc.end();
 })
 
 router.get("/logout", async (req, res) => {
