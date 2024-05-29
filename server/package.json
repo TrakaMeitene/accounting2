@@ -15,6 +15,7 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
     "mariadb": "^3.3.0",
+    "multer": "^1.4.5-lts.1",
     "node-fetch": "^2.6.7",
     "passport-descope": "^1.0.0",
     "pdfmake": "^0.2.10"

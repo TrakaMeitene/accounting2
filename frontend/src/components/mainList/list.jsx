@@ -5,6 +5,12 @@ import axios from "axios"
 import { MdOutlineEuro } from "react-icons/md";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import CreateForm from "../createForm/createform";
+import { GrDocumentPdf } from "react-icons/gr";
+import { MdDelete } from "react-icons/md";
+import { Toast } from 'primereact/toast';
+import { Tooltip } from 'primereact/tooltip';
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
 
 export default function List({ mode }) {
     const [first, setFirst] = useState(0);
@@ -15,11 +21,14 @@ export default function List({ mode }) {
     const [open, setOpen] = useState(false)
     const [data, setData] = useState([])
     const toast = useRef(null);
-const [file, setfile] = useState()
+    const [file, setfile] = useState()
+    const [visible, setVisible] = useState(false);
+    const [position, setPosition] = useState('center');
+    const [itemtoremove, setremove] = useState(0)
 
     useEffect(() => {
         getData()
-    })
+    }, [])
 
     const getData = () => {
         axios.get("http://localhost:3300/", { withCredentials: true })
@@ -40,8 +49,8 @@ const [file, setfile] = useState()
         setOpen(false)
         setIsEdit(false)
         getData()
-        console.log(isDirty)
-        if (isDirty) {
+
+        if (isDirty === "isDirty") {
             showSuccess()
         }
     }
@@ -65,15 +74,9 @@ const [file, setfile] = useState()
         setIsEdit(true)
     }
 
-    const removeitem = (item) => {
-        const id = item.id
-        axios.delete("http://localhost:3300/deleteinvoice", { params: { id } }, { withCredentials: true })
-            .then(response => {
-                if (response.data === "ok") {
-                    getData()
-                    showSuccess()
-                }
-            })
+    const openmodal = (item) => {
+        setremove(item.id)
+        show()
 
     }
 
@@ -81,9 +84,21 @@ const [file, setfile] = useState()
         toast.current.show({ severity: 'success', summary: 'Dati apstrādāti veiksmīgi!', life: 3000 });
     }
 
+    const removeitem = () => {
+        setVisible(false)
+        axios.delete("http://localhost:3300/deleteinvoice", { params: { itemtoremove } }, { withCredentials: true })
+            .then(response => {
+                if (response.data === "ok") {
+                    getData()
+                    showSuccess()
+                }
+            })
+    }
+
     const getpdf = (item) => {
         axios.get(`http://localhost:3300/createpdf/${item.id}`, { withCredentials: true, responseType: 'arraybuffer' })
-            .then(response => { 
+            .then(response => {
+                console.log(response)
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
@@ -91,14 +106,28 @@ const [file, setfile] = useState()
                 document.body.appendChild(link);
                 link.click();
                 console.log(url)
-})
+            })
     }
+    const footerContent = (
+        <div>
+            <Button label="Nē" icon="pi pi-times" onClick={() => setVisible(false)} className="p-button-text" />
+            <Button label="Jā" icon="pi pi-check" onClick={removeitem} autoFocus />
+        </div>
+    );
+
+    const show = () => {
+        setVisible(true);
+    };
 
     return (
-        <><div className="header">
-            <h1 className={mode ? "text" : "text black"}>Rēķini</h1>
-            <button className="new" onClick={opencraeteform}><div>+</div>Pievienot jaunu</button>
-        </div>
+
+        <>
+            <Toast ref={toast} />
+
+            <div className="header">
+                <h1 className={mode ? "text" : "text black"}>Rēķini</h1>
+                <button className="new" onClick={opencraeteform}><div>+</div>Pievienot jaunu</button>
+            </div>
 
             <div className="table" >
                 {result[page]?.map((x, index) => <div className="flex" key={index}><div className={mode ? "tr" : "tr light"} onClick={() => select(x)}>
@@ -106,18 +135,25 @@ const [file, setfile] = useState()
                     <span className="td">{moment(x.date).format("DD/MM/YYYY")}</span>
                     <span className="td">{x.company.substring(0, 10) + "..."}</span>
                     <span className="td">{x.total?.toFixed(2)} <MdOutlineEuro /></span>
-                    <span className="td"> <div className={x.payd === 1 ? "paid" : "pending"}>{x.payd === 1 ? "Apmaksāts" : "Neapmaksāts"}</div></span>
+                    <span className="td"> <div className={x.payd === 0 ? "paid" : "pending"}>{x.payd === 0 ? "Apmaksāts" : "Neapmaksāts"}</div></span>
                     <MdOutlineNavigateNext color="#876FF3FF" size={25} className="arrow" />
                 </div>
+                    <Tooltip target=".pdf" mouseTrack mouseTrackLeft={10}>Lejuplādēt rēķinu</Tooltip>
 
-                    <button
+                    <GrDocumentPdf className="pdf" onClick={() => getpdf(x)} size={30} color={mode ? "white" : "black"} style={{ marginLeft: 20, cursor: "pointer" }} />
+                    <Tooltip target=".delete" mouseTrack mouseTrackLeft={10}>Dzēst ierakstu</Tooltip>
+
+                    <MdDelete
                         size={25}
-                        className="delete-listitem"
-                        color="red"
-                        onClick={() => removeitem(x)}
-                    >dzēst</button>
-
-<span onClick={()=>getpdf(x)}>pdf</span>
+                        color="hsl(23, 95%, 52%)"
+                        onClick={() => {
+                            setVisible(true)
+                            openmodal(x)
+                        }}
+                        style={{ cursor: "pointer", marginLeft: 10 }}
+                        tooltip="Enter your username"
+                        className="delete"
+                    />
 
                 </div>)
                 }
@@ -125,6 +161,11 @@ const [file, setfile] = useState()
             </div>
             <Paginator first={first} rows={rows} totalRecords={data.length} rowsPerPageOptions={[2, 5, 10]} onPageChange={onPageChange} id="page" className={mode ? "p-paginator" : "white-paginator"} />
             {open && <CreateForm close={closecraeteform} selection={isEdit ? selection : undefined} />}
+            <Dialog  visible={visible} position={"center"} style={{ width: '50vw' }} onHide={() => { if (!visible) return; setVisible(false); }} footer={footerContent} draggable={false} resizable={false}>
+                <p className="m-0">
+                   Esat drošs, ka vēlaties neatgriezeniski dzēst ierakstu? 
+                </p>
+            </Dialog>
         </>
     )
 }

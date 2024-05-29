@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect } from "react"
 import "./createform.css"
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { InputText } from "primereact/inputtext";
@@ -20,7 +20,7 @@ export default function CreateForm({ close, selection }) {
     const [newproducts, setnewproducts] = useState(1)
 
     const [hiddenindex, setHidden] = useState([])
-    const [date, setDate] = useState(null);
+    const [date, setDate] = useState(new Date());
     const [datetill, setDatetill] = useState(null);
     const { handleSubmit } = useForm();
     const [products, setProducts] = useState([])
@@ -45,8 +45,7 @@ export default function CreateForm({ close, selection }) {
         if (selection) {
             init()
         }
-        //eslint-disable-next-line
-    }, [selection])
+    }, [])
 
     const init = () => {
 
@@ -63,10 +62,9 @@ export default function CreateForm({ close, selection }) {
     }
 
     const closing = (isDirty) => {
-        console.log(isDirty === "")
         setanim(true)
         setTimeout(() => {
-            close(isDirty === "" ? isDirty : undefined)
+            close(isDirty)
         }, 400)
     }
 
@@ -190,17 +188,14 @@ export default function CreateForm({ close, selection }) {
 
         axios.post(`http://localhost:3300/${route}`, { forma }, { withCredentials: true })
             .then((response) => {
-                if(response.data.status === "success"){
-                    closing("isDirty") 
+                if (response.data.status === "success") {
+                    closing("isDirty")
                 }
             })
     }
 
-
-
     return (
         <>
-
             <div className={anim === true ? "create out" : "create in"}>
                 <div className="createHeader" onClick={closing}> <MdOutlineNavigateNext color="#876FF3FF" size={25} className="transform" />Atpakaļ</div>
                 <h1 className="text black">Jauns rēķins</h1>
@@ -216,7 +211,12 @@ export default function CreateForm({ close, selection }) {
                                 Datums
                             </label>
 
-                            <Calendar className="p-inputtext-sm" id="buttondisplay" locale="lv" value={date} onChange={(e) => setDate(e.value)} showIcon dateFormat="dd.mm.yy" />
+                            <Calendar className="p-inputtext-sm" id="buttondisplay" locale="lv"
+                                value={date}
+                                onChange={(e) => setDate(e.value)}
+                                showIcon
+                                dateFormat="dd.mm.yy"
+                            />
                         </span>
                     </div>
 

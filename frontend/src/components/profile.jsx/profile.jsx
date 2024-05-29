@@ -8,6 +8,7 @@ import { Toast } from 'primereact/toast';
 export default function Profile({ mode }) {
     const [userdata, setUserdata] = useState({ name: "", surname: "", email: "", personalnr: "", adress: "", bank: "" })
     const toast = useRef(null);
+    const [file, setFile] = useState("")
 
     useEffect(() => {
         getuserdata()
@@ -27,8 +28,17 @@ export default function Profile({ mode }) {
     }
 
     const handleSubmit = (e) => {
-        e.preventDefault()
-        axios.post("http://localhost:3300/userdata", { userdata }, { withCredentials: true })
+          e.preventDefault()
+        const formData = new FormData();
+        formData.append('img', file)
+        formData.append('name', userdata.name)
+        formData.append('surname', userdata.surname)
+        formData.append('email', userdata.email)
+        formData.append('personalnr', userdata.personalnr)
+        formData.append('adress', userdata.adress)
+        formData.append('bank', userdata.bank)
+
+        axios.post("http://localhost:3300/userdata", formData, { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } })
             .then(response => {
                 if (response.data.status === "success") {
                     showSuccess()
@@ -38,6 +48,14 @@ export default function Profile({ mode }) {
 
     const back = () => {
         window.location.replace("/" + window.location.search)
+    }
+
+    const onUpload = () => {
+        toast.current.show({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
+    };
+
+    const handleChangeimage = (e) => {
+        setFile(e.target.files[0])
     }
 
     return (
@@ -81,6 +99,9 @@ export default function Profile({ mode }) {
                             <InputText className="p-inputtext-sm" style={{ width: 250 }} id="documentNr" defaultValue={userdata.bank} onChange={(e) => setUserdata({ ...userdata, bank: e.target.value })} />
                         </span>
 
+                    </div>
+                    <div className="flex-row">
+                        <input type="file" id="img" name="img" accept="image/*" onChange={handleChangeimage} className="upload" />
                     </div>
                     <Button label="SAGLABĀT" type="submit" />
                 </form >
