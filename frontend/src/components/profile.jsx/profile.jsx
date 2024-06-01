@@ -4,11 +4,14 @@ import { InputText } from "primereact/inputtext";
 import { Button } from 'primereact/button';
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { Toast } from 'primereact/toast';
+import { Image } from 'primereact/image';
+import "./profile.css"
 
 export default function Profile({ mode }) {
     const [userdata, setUserdata] = useState({ name: "", surname: "", email: "", personalnr: "", adress: "", bank: "" })
     const toast = useRef(null);
     const [file, setFile] = useState("")
+    const [image, setImage] = useState("")
 
     useEffect(() => {
         getuserdata()
@@ -21,14 +24,17 @@ export default function Profile({ mode }) {
 
     const getuserdata = () => {
         axios.get("http://localhost:3300/getuserdata", { withCredentials: true })
-            .then(response => setUserdata(response.data[0]))
+            .then((response) => {
+                setUserdata(response.data[0])
+                setImage(response.data[0].file.length >1 ? `http://localhost:3300${response.data[0].file}` : "")
+            })
     }
     const showSuccess = () => {
         toast.current.show({ severity: 'success', summary: 'Dati apstrādāti veiksmīgi!', life: 3000 });
     }
 
     const handleSubmit = (e) => {
-          e.preventDefault()
+        e.preventDefault()
         const formData = new FormData();
         formData.append('img', file)
         formData.append('name', userdata.name)
@@ -56,6 +62,7 @@ export default function Profile({ mode }) {
 
     const handleChangeimage = (e) => {
         setFile(e.target.files[0])
+        setImage(URL.createObjectURL(e.target.files[0]))
     }
 
     return (
@@ -100,8 +107,13 @@ export default function Profile({ mode }) {
                         </span>
 
                     </div>
-                    <div className="flex-row">
-                        <input type="file" id="img" name="img" accept="image/*" onChange={handleChangeimage} className="upload" />
+                    <div className="upload">
+                        <Image src={ image ? image : "broken-image.png"} alt="Image" width="100" height="80" style={{ marginRight: 20 }} preview />
+
+                        <div className="p-button p-component">
+                            <label htmlFor="img" className="btn p-button-label">IZVĒLĒTIES FAILU</label>
+                            <input type="file" id="img" name="img" accept="image/*" onChange={handleChangeimage} hidden />
+                        </div>
                     </div>
                     <Button label="SAGLABĀT" type="submit" />
                 </form >

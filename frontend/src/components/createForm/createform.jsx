@@ -132,16 +132,27 @@ export default function CreateForm({ close, selection }) {
     }
 
     const unitchange = (unit, ind) => {
+        console.log(unit)
         for (let i = 0; i < initdata[1]?.length; i++) {
             if (i === ind) {
                 initdata[1][i].unit = unit
             }
         }
+//nestrada
+        // if (products.length === 0) {
+        //     setProducts([{ "ind": ind, "unit": unit }])
+        // } else {
+        //     products.forEach(x => {
+        //         if (x.ind === ind) { x.unit = unit } else {
+        //             setProducts(products => [...products, { "ind": ind, "unit": unit }])
+        //         }
+        //     })
+        // }
 
         products.forEach(x => { if (x.ind === ind) { x.unit = unit } })
         totalsumm()
     }
-
+console.log(products)
     const totalsumm = () => {
         const unique = products.filter((a, i) => products.findIndex((s) => a.ind === s.ind) === i)
 

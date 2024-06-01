@@ -16,6 +16,7 @@ import {
     RouterProvider,
 } from "react-router-dom";
 import List from "./list";
+import logo from "../../assets/logosmall.png"
 
 export default function MainList({ user }) {
     const [mode, setMode] = useState(true)
@@ -91,7 +92,7 @@ export default function MainList({ user }) {
 
                 <div className="leftContainer">
                     <div className="image">
-                        "test"
+                        <img src={logo} width={70}/>
                     </div>
                     <div className="moon" onClick={modechange}>{mode === true ? <FaMoon color="white" size={20} /> : <IoMdSunny color="white" size={20} />}</div>
                     <Avatar image={picture} className="mr-2 signout" size="large" shape="circle" onClick={(e) => op.current.toggle(e)} />

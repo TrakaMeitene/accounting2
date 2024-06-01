@@ -12,14 +12,14 @@ export default function Product({ ind, price, count, unit, name, value }) {
 
     useEffect(() => {
         if (value) {
-            setprices(value[ind]?.price ? value[ind]?.price : 0.00)
+            setprices(value[ind]?.price? value[ind]?.price  : 0.00)
             setcounts(value[ind]?.count ? value[ind]?.count : 0)
         }
     }, [value, ind])
 
     const priceset = (pay, ind) => {
         if(pay !== null){
-        price(pay.toFixed(2).toString(), ind)
+        price(pay.toFixed(2), ind)
         setprices(pay)
         }
     }
@@ -38,7 +38,6 @@ export default function Product({ ind, price, count, unit, name, value }) {
         setunitname(unitname)
         unit(unitname, ind)
     }
-
 
     return (
         <>

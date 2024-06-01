@@ -6,11 +6,8 @@ var bodyParser = require('body-parser')
 import DescopeClient from '@descope/node-sdk';
 const cookieParser = require('cookie-parser');
 router.use(cookieParser());
-const { jsPDF } = require("jspdf");
-import autoTable from 'jspdf-autotable'
 import pool from "../db.js";
 var PdfPrinter = require('pdfmake');
-// var PdfPrinter = require('../src/printer');
 var fs = require('fs');
 router.use('/uploads', express.static('uploads'))
 const multer = require("multer");
@@ -246,23 +243,27 @@ router.post("/userdata",
 
   const user = req.cookies.user.userId
   const data = req.body
-  console.log(req.file, req.body)
+
   const checkifexists = await pool.query("SELECT * from usersettings where userid=?", [user])
 
   let rows = "name=?, surname=?, email=?, personalnr=?, adress=?, bank=?"
   const dependencies = [data.name, data.surname, data.email, data.personalnr, data.adress, data.bank]
 
-  if(req.file){
-    rows = rows.concat(", file=?")
-    dependencies.splice(6, 0, '/uploads/' + req.file.filename)
-  }
-console.log(dependencies, rows)
+
   if (checkifexists.length === 1) {
+    if(req.file){
+      rows = rows.concat(", file=?")
+      dependencies.splice(6, 0, '/uploads/' + req.file.filename)
+    }
     const userupdate = await pool.query(`UPDATE usersettings SET ${rows}`, dependencies)
     return userupdate.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
 
   }
-  const userinsert = await pool.query("INSERT into usersettings (userid, name, surname, email, personalnr, adress, bank ) values (?,?,?,?,?, ?,?) ", [user, data.name, data.surname, data.email, data.personalnr, data.adress, data.bank])
+  if(req.file){
+    rows = rows.concat(", file=?, userid=?")
+    dependencies.splice(6, 0, '/uploads/' + req.file.filename, user)
+  }
+  const userinsert = await pool.query(`INSERT into usersettings (${rows}) values (?,?,?,?,?, ?,?) `, [dependencies])
   userinsert.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
 })
 
@@ -307,15 +308,11 @@ router.get("/createpdf/:selection", async (req, res) => {
     tabledata.push([products[i].name, Number(products[i].price).toFixed(2).toString() + " EUR", String(products[i].count), products[i].unit, Number(products[i].price * products[i].count).toFixed(2).toString() + " EUR"])
   })
 
+
   var docDefinition = {
     content: [
       {
-      columns: [
-        {
-          image: './files/frogit.png',
-          width: 200
-        }
-      ],
+      columns: [],
     },
       {
         table: {
@@ -380,6 +377,15 @@ router.get("/createpdf/:selection", async (req, res) => {
       { text: 'Dokuments ir sagatavots elektroniski un ir derīgs bez paraksta.', fontSize: 9, normal: true, margin: [0, 20, 0, 8] },
     ]
 };
+
+if(usersetings[0].file.length > 1){
+  docDefinition?.content[0].columns.push(
+    {
+      image:  `.${usersetings[0].file}`  ,
+      width: 200
+    }
+  )
+}
 
 const pdfDoc = printer.createPdfKitDocument(docDefinition);
 res.contentType('application/pdf');
