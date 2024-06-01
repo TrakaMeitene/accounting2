@@ -30,7 +30,7 @@ export default function List({ mode }) {
     }, [])
 
     const getData = () => {
-        axios.get("http://localhost:3300/", { withCredentials: true })
+        axios.get(process.env.REACT_APP_API_URL + "/", { withCredentials: true })
             .then(response => setData(response.data))
     }
 
@@ -88,7 +88,7 @@ export default function List({ mode }) {
 
     const removeitem = () => {
         setVisible(false)
-        axios.delete("http://localhost:3300/deleteinvoice", { params: { itemtoremove } }, { withCredentials: true })
+        axios.delete(process.env.REACT_APP_API_URL+ "/deleteinvoice", { params: { itemtoremove } }, { withCredentials: true })
             .then(response => {
                 if (response.data === "ok") {
                     getData()
@@ -98,7 +98,7 @@ export default function List({ mode }) {
     }
 
     const getpdf = (item) => {
-        axios.get(`http://localhost:3300/createpdf/${item.id}`, { withCredentials: true, responseType: 'arraybuffer' })
+        axios.get(process.env.REACT_APP_API_URL + `/createpdf/${item.id}`, { withCredentials: true, responseType: 'arraybuffer' })
             .then(response => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');

@@ -24,10 +24,10 @@ export default function Profile({ mode }) {
     }, [mode])
 
     const getuserdata = () => {
-        axios.get("http://localhost:3300/getuserdata", { withCredentials: true })
+        axios.get(process.env.REACT_APP_API_URL + "/getuserdata", { withCredentials: true })
             .then((response) => {
                 setUserdata(response.data[0])
-                setImage(response.data[0].file.length >1 ? `http://localhost:3300${response.data[0].file}` : "")
+                setImage(response.data[0].file.length >1 ? process.env.REACT_APP_API_URL +`${response.data[0].file}` : "")
             })
     }
 
@@ -49,7 +49,7 @@ export default function Profile({ mode }) {
         formData.append('adress', userdata.adress)
         formData.append('bank', userdata.bank)
 
-        axios.post("http://localhost:3300/userdata", formData, { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } })
+        axios.post(process.env.REACT_APP_API_URL + "/userdata", formData, { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } })
             .then(response => {
                 if (response.data.status === "success") {
                     showSuccess()

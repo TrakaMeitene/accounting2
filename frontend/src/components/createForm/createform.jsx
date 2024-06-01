@@ -49,7 +49,7 @@ export default function CreateForm({ close, selection }) {
 
     const init = () => {
 
-        axios.get(`http://localhost:3300/forminit/${selection.id}`, { withCredentials: true })
+        axios.get(process.env.REACT_APP_API_URL + `/forminit/${selection.id}`, { withCredentials: true })
             .then(response => {
                 setInitdata(response.data)
                 setDate(new Date(response.data[0].date))
@@ -215,7 +215,7 @@ export default function CreateForm({ close, selection }) {
 
         let route = selection ? "update" : "create"
 
-        axios.post(`http://localhost:3300/${route}`, { forma }, { withCredentials: true })
+        axios.post(process.env.REACT_APP_API_URL + `/${route}`, { forma }, { withCredentials: true })
             .then((response) => {
                 if (response.data.status === "success") {
                     closing("isDirty")

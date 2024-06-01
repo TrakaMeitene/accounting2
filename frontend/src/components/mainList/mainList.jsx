@@ -68,7 +68,7 @@ export default function MainList({ user }) {
     }, [mode])
 
     const getuser = () => {
-        axios.get("http://localhost:3300/user", { withCredentials: true })
+        axios.get(process.env.REACT_APP_API_URL+"/user", { withCredentials: true })
             .then(response => setPicture(response.data))
     }
 
@@ -79,7 +79,7 @@ export default function MainList({ user }) {
 
 
     const handleLogout = () => {
-        axios.get("http://localhost:3300/logout", { withCredentials: true })
+        axios.get(process.env.REACT_APP_API_URL + "logout", { withCredentials: true })
             .then(response => window.location.replace("/")
             )
     }

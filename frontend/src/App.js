@@ -39,7 +39,7 @@ function App() {
     e.preventDefault()
     const data = { "email": value }
 
-    axios.post("http://localhost:3300/sign", data, { withCredentials: true })
+    axios.post(process.env.REACT_APP_API_URL+ "/sign", data, { withCredentials: true })
       .then(response => {
         if (response.data.message === "success") {
           setSuccess(true)
@@ -50,12 +50,12 @@ function App() {
   const verify = () => {
     const data = { "token": token, "email": value }
 
-    axios.post("http://localhost:3300/verify", data, { withCredentials: true })
+    axios.post(process.env.REACT_APP_API_URL+ "/verify", data, { withCredentials: true })
       .then(response => setSigned(true))
   }
 
   const socauth = () => {
-    axios.post("http://localhost:3300/social")
+    axios.post(process.env.REACT_APP_API_URL+ "/social")
       .then((response) => {
         window.location.replace(response.data)
       }
@@ -64,7 +64,7 @@ function App() {
 
   const socverify = () => {
     const data = { "code": code }
-    axios.post("http://localhost:3300/socverify", data, { withCredentials: true })
+    axios.post(process.env.REACT_APP_API_URL + "/socverify", data, { withCredentials: true })
       .then((response) => {
         setSigned(true)
       })

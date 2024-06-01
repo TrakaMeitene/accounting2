@@ -54,7 +54,7 @@ router.use(bodyParser.json())
 router.post("/sign", async (req, res) => {
 try{
   const loginId = req.body.email
-  const uri = "http://localhost:3000"
+  const uri = process.env.HOSTNAME
   const deliveryMethod = "email"
   //    signUpOptions (SignUpOptions): this allows you to configure behavior during the authentication process.
   const signUpOptions = {
@@ -82,7 +82,7 @@ try{
 router.post("/social", async (req, res) => {
   try {
     const provider = "facebook"
-    const redirectURL = "http://localhost:3000/"
+    const redirectURL = process.env.HOSTNAME
     const loginOptions = {
       "stepup": false,
       "mfa": false,
