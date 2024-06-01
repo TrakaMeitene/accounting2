@@ -44,9 +44,9 @@ section {
 
 }
 
-body {
+/* body {
     height: auto;
-}
+} */
 
 .text {
     font-family: 'Josefin Sans', sans-serif;
@@ -180,6 +180,7 @@ body {
         flex-direction: row-reverse;
         justify-content: center;
         top: 0;
+        z-index: 999;
     }
 
     .header {

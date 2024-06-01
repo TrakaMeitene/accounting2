@@ -5,3 +5,12 @@ flex-direction: row;
 align-items: center;
 margin-bottom:20px;
 }
+
+.profile{
+    width: 80%;
+    margin-top: 10%;
+}
+
+.profile .flex-row>span{
+    margin-bottom:20px;
+}

@@ -52,7 +52,7 @@ const descopeClient = DescopeClient({ projectId: process.env.PROJECTID, manageme
 router.use(bodyParser.json())
 
 router.post("/sign", async (req, res) => {
-
+try{
   const loginId = req.body.email
   const uri = "http://localhost:3000"
   const deliveryMethod = "email"
@@ -72,6 +72,10 @@ router.post("/sign", async (req, res) => {
   else {
     res.send({ message: "success", user: data.data.picture })
   }
+} catch(err){
+  res.send(err)
+  console.trace(err)
+}
 
 })
 
@@ -117,6 +121,7 @@ router.post("/socverify", async (req, res) => {
 })
 
 router.post("/verify", async (req, res) => {
+  try{
   const token = req.body.token
 
   const resp = await descopeClient.magicLink.verify(token)
@@ -135,6 +140,11 @@ router.post("/verify", async (req, res) => {
 
     res.send({ message: "success" })
   }
+}
+catch(err){
+  console.trace(err)
+
+}
 })
 
 router.get("/", async (req, res) => {
@@ -163,7 +173,8 @@ router.get("/forminit/:selection", async (req, res) => {
     res.send(result)
 
   } catch (err) {
-
+console.trace(err)
+res.send(err)
   }
 })
 
@@ -217,14 +228,14 @@ router.post("/update", async (req, res) => {
     }
 
     for (let i = 0; i < data.products.length; i++) {
-      if (data.products[i]?.id) {
+      if (data.products[i].id) {
         products = await pool.query("UPDATE products SET name=?, unit=?, price=?, count=? WHERE id=?", [data.products[i].name, data.products[i].unit, data.products[i].price, data.products[i].count, data.products[i]?.id])
-        products.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
       } else {
         products = await pool.query("INSERT into products (invoiceId, name, unit, price, count) values (?,?,?,?,?) ", [data.selection, data.products[i].name, data.products[i].unit, data.products[i].price, data.products[i].count])
-        products.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
       }
+
     }
+    products.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
 
   }
   catch (err) {
@@ -239,6 +250,7 @@ router.get("/user", async (req, res) => {
 
 router.post("/userdata", 
   upload.single("img"), async (req, res) => {
+  
   let errorMsg = { message: "Kaut kas nogāja greizi. Mēģini vēlreiz", status: "error" }
 
   const user = req.cookies.user.userId

@@ -4,7 +4,7 @@ import { InputText } from "primereact/inputtext";
 import { InputNumber } from 'primereact/inputnumber';
 import 'primereact/resources/primereact.min.css';
 
-export default function Product({ ind, price, count, unit, name, value }) {
+export default function Product({ ind, price, count, unit, name, value, totalsummcount }) {
     const [prices, setprices] = useState(0.00)
     const [counts, setcounts] = useState(0)
     const [productname, setname] = useState("")
@@ -12,21 +12,23 @@ export default function Product({ ind, price, count, unit, name, value }) {
 
     useEffect(() => {
         if (value) {
-            setprices(value[ind]?.price? value[ind]?.price  : 0.00)
+            setprices(value[ind]?.price ? value[ind]?.price : 0.00)
             setcounts(value[ind]?.count ? value[ind]?.count : 0)
         }
     }, [value, ind])
 
     const priceset = (pay, ind) => {
-        if(pay !== null){
-        price(pay.toFixed(2), ind)
-        setprices(pay)
-        }
+        if (pay !== null) {
+            price(pay.toFixed(2), ind)
+            setprices(pay)
+        } 
     }
 
     const countset = (number, ind) => {
-        count(number, ind)
-        setcounts(number)
+        if (number !== null) {
+            count(number, ind)
+            setcounts(number)
+        }
     }
 
     const names = (product, ind) => {
@@ -52,7 +54,7 @@ export default function Product({ ind, price, count, unit, name, value }) {
 
 
                     <label className="nomargin" htmlFor={"price" + ind}>Cena par vienību</label>
-                    <InputNumber className="p-inputtext-sm" id={"price" + ind}  value={value ? value[ind]?.price : prices}  onChange={(e) => priceset(e.value, ind)} locale="lv-LV" minFractionDigits={2} min={0} currency="EUR" mode="currency" style={{ width: 100 }} />
+                    <InputNumber className="p-inputtext-sm" id={"price" + ind} value={value ? value[ind]?.price : prices} onChange={(e) => priceset(e.value, ind)} locale="lv-LV" minFractionDigits={2} min={0} currency="EUR" mode="currency" style={{ width: 100 }} />
                 </div>
                 <div className="flex-auto">
 
@@ -66,7 +68,7 @@ export default function Product({ ind, price, count, unit, name, value }) {
                 </div>
                 <div className="flex-column" style={{ width: 150 }}>
                     <label className="nomargin" htmlFor={"total" + ind}>Cena kopā</label>
-                    <div style={{ marginTop: "10px", paddingLeft: "20px" }}>{(prices * counts).toFixed(2)} <MdOutlineEuro size={12} /></div>
+                    <div style={{ marginTop: "10px", paddingLeft: "20px" }} onChange={totalsummcount}>{(prices * counts).toFixed(2)} <MdOutlineEuro size={12} /></div>
                 </div>
             </div>
         </>

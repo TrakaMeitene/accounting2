@@ -11,6 +11,7 @@ import { Toast } from 'primereact/toast';
 import { Tooltip } from 'primereact/tooltip';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
+import Errorpage from "../errorpage/errorpage";
 
 export default function List({ mode }) {
     const [first, setFirst] = useState(0);
@@ -21,9 +22,7 @@ export default function List({ mode }) {
     const [open, setOpen] = useState(false)
     const [data, setData] = useState([])
     const toast = useRef(null);
-    const [file, setfile] = useState()
     const [visible, setVisible] = useState(false);
-    const [position, setPosition] = useState('center');
     const [itemtoremove, setremove] = useState(0)
 
     useEffect(() => {
@@ -34,6 +33,9 @@ export default function List({ mode }) {
         axios.get("http://localhost:3300/", { withCredentials: true })
             .then(response => setData(response.data))
     }
+
+    if(!data)
+    return <Errorpage mode={mode}/>
 
     const onPageChange = (event) => {
         setFirst(event.first);

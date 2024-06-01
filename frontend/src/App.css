@@ -1,3 +1,11 @@
+body{
+  width: 100vw;
+  height: 100vh;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .signout{
   color: white;
   position: absolute;
@@ -18,7 +26,11 @@ padding: 20px;
 display: flex;
 flex-direction: column;
 height:auto;
-justify-content: space-between;
+align-items: center;
+}
+
+.card > form{
+  width: 100%
 }
 
 .email{
@@ -27,14 +39,6 @@ justify-content: space-between;
 
 .p-menuitem-text{
   margin-left: 10px;
-}
-
-body{
-  display:flex;
-justify-content: center;
-align-items: center;
-height: auto;
-
 }
 
 .submit{
@@ -46,11 +50,10 @@ height: auto;
   background: none;
   color: #6366f1;
   flex-direction: row-reverse;
+width: 100%;
 }
-/* .line{
-  display: flex;
-  flex-direction: row;
-} */
+
+
 .line hr {
   border: none;
   border-top: 1px solid #333;

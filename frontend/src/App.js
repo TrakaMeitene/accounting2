@@ -11,10 +11,9 @@ import { Button } from 'primereact/button';
 import { FaEnvelope } from "react-icons/fa";
 import { Card } from 'primereact/card';
 import { CiFacebook } from "react-icons/ci";
-import Profile from './components/profile.jsx/profile.jsx';
+import logo from "./assets/logo.png"
 
 function App() {
-
 
   const [signedin, setSigned] = useState(false)
   const [value, setValue] = useState("")
@@ -32,6 +31,7 @@ function App() {
     if (code !== null) {
       socverify()
     }
+    // eslint-disable-next-line
   }, [token, code])
 
 
@@ -39,7 +39,7 @@ function App() {
     e.preventDefault()
     const data = { "email": value }
 
-    ("http://localhost:3300/sign", data, { withCredentials: true })
+    axios.post("http://localhost:3300/sign", data, { withCredentials: true })
       .then(response => {
         if (response.data.message === "success") {
           setSuccess(true)
@@ -74,7 +74,9 @@ function App() {
   return (
     <>
 
-      {(!signedin & !success) ? <div className='card'><form onSubmit={signin} >
+      {(!signedin & !success) ? <div className='card'>
+        <img src={logo} width={300} height={150}/>
+        <form onSubmit={signin} >
         <span className="p-float-label p-input-icon-right email">
           <FaEnvelope />
           <InputText id="email" className='email' value={value} onChange={(e) => setValue(e.target.value)} />

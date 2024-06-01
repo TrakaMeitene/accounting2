@@ -6,6 +6,7 @@ import { MdOutlineNavigateNext } from "react-icons/md";
 import { Toast } from 'primereact/toast';
 import { Image } from 'primereact/image';
 import "./profile.css"
+import Errorpage from "../errorpage/errorpage";
 
 export default function Profile({ mode }) {
     const [userdata, setUserdata] = useState({ name: "", surname: "", email: "", personalnr: "", adress: "", bank: "" })
@@ -29,6 +30,10 @@ export default function Profile({ mode }) {
                 setImage(response.data[0].file.length >1 ? `http://localhost:3300${response.data[0].file}` : "")
             })
     }
+
+    if(!userdata)
+    return <Errorpage mode={mode}/>
+
     const showSuccess = () => {
         toast.current.show({ severity: 'success', summary: 'Dati apstrādāti veiksmīgi!', life: 3000 });
     }
@@ -56,10 +61,6 @@ export default function Profile({ mode }) {
         window.location.replace("/" + window.location.search)
     }
 
-    const onUpload = () => {
-        toast.current.show({ severity: 'info', summary: 'Success', detail: 'File Uploaded' });
-    };
-
     const handleChangeimage = (e) => {
         setFile(e.target.files[0])
         setImage(URL.createObjectURL(e.target.files[0]))
@@ -69,7 +70,7 @@ export default function Profile({ mode }) {
         <>
             <Toast ref={toast} />
 
-            <div>
+            <div className="profile">
                 <div onClick={back} className={mode ? " createHeader white" : "createHeader black"}> <MdOutlineNavigateNext color="#876FF3FF" size={25} className="transform" />Atpakaļ</div>
 
                 <h1 className={mode ? "text white" : "text black"}>Lietotāja informācija</h1>

@@ -45,7 +45,7 @@ export default function CreateForm({ close, selection }) {
         if (selection) {
             init()
         }
-    }, [])
+    })
 
     const init = () => {
 
@@ -72,6 +72,8 @@ export default function CreateForm({ close, selection }) {
     const addproduct = (e) => {
         e.preventDefault()
         setnewproducts(newproducts + 1)
+        setProducts([{ "ind": newproducts + 1, "name": "", "unit": "", "count": 1, "price": 0.00 }])
+
     }
 
     const removeitem = (ind) => {
@@ -108,17 +110,20 @@ export default function CreateForm({ close, selection }) {
                 initdata[1][i].price = price
             }
         }
-        totalsumm()
 
         if (products.length === 0) {
             setProducts([{ "ind": ind, "price": price }])
         } else {
             products.forEach(x => {
-                if (x.ind === ind) { x.price = price } else {
+                if (x.ind === ind + 1) { 
+                    x.price = price 
+                } else {
                     setProducts(products => [...products, { "ind": ind, "price": price }])
+                    console.log(price)
                 }
             })
         }
+        totalsumm()
     }
 
     const countchange = (count, ind) => {
@@ -127,35 +132,44 @@ export default function CreateForm({ close, selection }) {
                 initdata[1][i].count = count
             }
         }
-        products.forEach(x => { if (x.ind === ind) { x.count = count } })
-        totalsumm()
+
+        if (products.length === 0) {
+            setProducts([{ "ind": ind, "count": count }])
+        } else {
+            products.forEach(x => {
+                if (x.ind === ind) { x.count = count } else {
+                    setProducts(products => [...products, { "ind": ind, "unit": count }])
+                }
+            }
+            )
+        }
+       totalsumm()
     }
 
     const unitchange = (unit, ind) => {
-        console.log(unit)
         for (let i = 0; i < initdata[1]?.length; i++) {
             if (i === ind) {
                 initdata[1][i].unit = unit
             }
         }
-//nestrada
-        // if (products.length === 0) {
-        //     setProducts([{ "ind": ind, "unit": unit }])
-        // } else {
-        //     products.forEach(x => {
-        //         if (x.ind === ind) { x.unit = unit } else {
-        //             setProducts(products => [...products, { "ind": ind, "unit": unit }])
-        //         }
-        //     })
-        // }
 
-        products.forEach(x => { if (x.ind === ind) { x.unit = unit } })
-        totalsumm()
+        if (products.length === 0) {
+            setProducts([{ "ind": ind, "unit": unit }])
+        } else {
+            products.forEach(x => {
+                if (x.ind === ind) { x.unit = unit } else {
+                    setProducts(products => [...products, { "ind": ind, "unit": unit }])
+                }
+            }
+            )
+        }
+
+       // products.forEach(x => { if (x.ind === ind) { x.unit = unit } })
+       // totalsumm()
     }
-console.log(products)
+
     const totalsumm = () => {
         const unique = products.filter((a, i) => products.findIndex((s) => a.ind === s.ind) === i)
-
         setProducts(unique)
 
         let set = []
@@ -175,9 +189,13 @@ console.log(products)
             }
         }
         const summ = set.reduce((value, a) => value + a, 0.00)
-
         setSumm(summ)
 
+    }
+
+    const update=(value)=>{
+        setPayd(value)
+        totalsumm()
     }
 
     const onSubmit = (data) => {
@@ -292,6 +310,7 @@ console.log(products)
                                     unit={unitchange}
                                     name={namechange}
                                     value={initdata[1]}
+                                    totalsummcount={totalsumm}
                                 /><MdDelete
                                     data-pr-tooltip="Dzēst produktu/pakalpojumu"
                                     data-pr-position="top"
@@ -314,11 +333,11 @@ console.log(products)
                     <div className="flex-auto row2">
                         <span className="margin">
                             <label htmlFor="payd" className="ml-2">Apmaksāts</label>
-                            <RadioButton inputId="payd" name="payd" value={0} checked={payd === 0} onChange={(e) => setPayd(e.value)} />
+                            <RadioButton inputId="payd" name="payd" value={0} checked={payd === 0} onChange={(e) => update(e.value)} />
                         </span>
                         <span className="margin">
                             <label htmlFor="payd-not" className="ml-2">Nepmaksāts</label>
-                            <RadioButton inputId="payd-not" name="payd" value={1} checked={payd === 1} onChange={(e) => setPayd(e.value)} />
+                            <RadioButton inputId="payd-not" name="payd" value={1} checked={payd === 1} onChange={(e) => update(e.value)} />
                         </span>
                     </div>
                     <div className="flex-row row2">
