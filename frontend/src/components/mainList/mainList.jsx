@@ -17,6 +17,7 @@ import {
 } from "react-router-dom";
 import List from "./list";
 import logo from "../../assets/logosmall.png"
+import Errorpage from "../errorpage/errorpage";
 
 export default function MainList({ user }) {
     const [mode, setMode] = useState(true)
@@ -29,10 +30,12 @@ export default function MainList({ user }) {
         {
             path: "/",
             element: <List mode={mode} />,
+            errorElement: <Errorpage mode={mode}/>
         },
         {
             path: "/profile/",
             element: <Profile mode={mode} />,
+            errorElement: <Errorpage mode={mode}/>
         },
     ]);
 
