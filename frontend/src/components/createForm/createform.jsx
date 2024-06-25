@@ -25,7 +25,7 @@ export default function CreateForm({ close, selection }) {
     const { handleSubmit } = useForm();
     const [products, setProducts] = useState([])
     const [summ, setSumm] = useState(0.00)
-    const [payd, setPayd] = useState("Neapmaksāts")
+    const [payd, setPayd] = useState(1)
     const [initdata, setInitdata] = useState({})
     const [forma, setform] = useState({ documentNr: "", bank: "", phone: "", email: "", Company: "", CompanyReg: "", adress: "", Comment: "" })
 
@@ -45,7 +45,7 @@ export default function CreateForm({ close, selection }) {
         if (selection) {
             init()
         }
-    })
+    }, [])
 
     const init = () => {
 
@@ -337,7 +337,7 @@ export default function CreateForm({ close, selection }) {
                         </span>
                         <span className="margin">
                             <label htmlFor="payd-not" className="ml-2">Nepmaksāts</label>
-                            <RadioButton inputId="payd-not" name="payd" value={1} checked={payd === 1} onChange={(e) => update(e.value)} />
+                            <RadioButton inputId="payd-not" name="payd-not" value={1} checked={payd === 1} onChange={(e) => update(e.value)} />
                         </span>
                     </div>
                     <div className="flex-row row2">

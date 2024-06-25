@@ -11,6 +11,7 @@ var PdfPrinter = require('pdfmake');
 var fs = require('fs');
 router.use('/uploads', express.static('uploads'))
 const multer = require("multer");
+const path = require('node:path');
 
 
 const upload = multer({
@@ -29,8 +30,6 @@ const upload = multer({
 
 var fonts = {
   Roboto: {
-    //normal: 'fonts/Parisienne-Regular.ttf',
-    //normal: 'fonts/Lovelo Line Light.otf',
     normal: "fonts/Inter-VariableFont_slnt,wght.ttf"
   }
 };
@@ -61,13 +60,11 @@ try{
     "customClaims": { "claim": "Value1" },
     "templateOptions": { "option": "Value1" }
   }
-
   const resp = await descopeClient.magicLink.signUpOrIn[deliveryMethod](loginId, uri, signUpOptions);
   let data = await descopeClient.management.user.load(loginId)
 
-  if (!re.ok) {
+  if (!resp.ok) {
     console.log("Failed to initialize signUpOrIn flow")
-    res.send(resp.error)
   }
   else {
     res.send({ message: "success", user: data.data.picture })
@@ -109,10 +106,9 @@ router.post("/socverify", async (req, res) => {
   const response = await descopeClient.oauth.exchange(code);
 
   if (!response.ok) {
-    console.log("Failed to finish oauth")
+     return res.send("Failed to finish oauth")
   }
   else {
-    console.log("Successfully finished oauth.")
     res.cookie('user', response?.data?.user, { maxAge: 90000000, httpOnly: true, secure: true, sameSite: "none" })
     res.cookie('session', response?.data?.sessionJwt, { maxAge: 90000000, httpOnly: true, secure: true, sameSite: "none" })
 
@@ -124,11 +120,11 @@ router.post("/verify", async (req, res) => {
   try{
   const token = req.body.token
 
-  const resp = await descopeClient.magicLink.verify(token)
-
   if (req.cookies.session) {
-    res.send({ message: "success" })
+    return res.send({ message: "success" })
   }
+
+  const resp = await descopeClient.magicLink.verify(token)
 
   if (!resp.ok) {
     console.log("Failed to verify magic link token")
@@ -143,14 +139,13 @@ router.post("/verify", async (req, res) => {
 }
 catch(err){
   console.trace(err)
-
 }
 })
 
 router.get("/", async (req, res) => {
 
   try {
-    const user = req.cookies.user.userId
+    const user = req.cookies.user?.userId
 
     const result = await pool.query('SELECT * from invoices where userId=?', [user])
     res.send(result)
@@ -213,13 +208,13 @@ router.post("/update", async (req, res) => {
     let products = ""
 
     const update = await pool.query("UPDATE invoices SET comments=?, company=?, adress=?, bank=?, date=?, documentNr=?, email=?, payd=?, paytill=?, phone=?, total=?, registration=?  WHERE id=?", [data.Comment, data.Company, data.adress, data.bank, new Date(data.date), data.documentNr, data.email, data.payd, new Date(data.paytill), data.phone, data.total, data.CompanyReg, data.selection])
-    //check for deleted products
     const allproducts = await pool.query('SELECT * from products where invoiceId=?', [data.products[0].invoiceId])
     const allproductids = []
     const invoiceprod = []
 
     allproducts.map(x => allproductids.push(x.id))
     data.products.map(x => invoiceprod.push(x.id))
+        //check for deleted products
     var checkfordeleted = allproductids.filter(function (item) {
       return !invoiceprod.includes(item)
     })
@@ -239,6 +234,7 @@ router.post("/update", async (req, res) => {
 
   }
   catch (err) {
+    res.send(err)
     console.log(err)
   }
 })
@@ -253,19 +249,17 @@ router.post("/userdata",
   
   let errorMsg = { message: "Kaut kas nogāja greizi. Mēģini vēlreiz", status: "error" }
 
-  const user = req.cookies.user.userId
+  const user = req.cookies.user?.userId
   const data = req.body
-
   const checkifexists = await pool.query("SELECT * from usersettings where userid=?", [user])
 
   let rows = "name=?, surname=?, email=?, personalnr=?, adress=?, bank=?"
   const dependencies = [data.name, data.surname, data.email, data.personalnr, data.adress, data.bank]
 
-
   if (checkifexists.length === 1) {
     if(req.file){
       rows = rows.concat(", file=?")
-      dependencies.splice(6, 0, '/uploads/' + req.file.filename)
+      dependencies.splice(6, 0, '/uploads/' + req.file?.filename)
     }
     const userupdate = await pool.query(`UPDATE usersettings SET ${rows}`, dependencies)
     return userupdate.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
@@ -332,12 +326,12 @@ router.get("/createpdf/:selection", async (req, res) => {
           headerRows: 2,
 
           body: [
-            [{ text: "Rēķina numurs", style: 'tableHeader' }, invoice[0].documentNr],
-            ["Rēķina datums", new Date(invoice[0].paytill).toLocaleDateString("de-DE")],
-            ["Rēkina apmaksas termiņš", new Date(invoice[0].paytill).toLocaleDateString("de-DE")],
-            ["Klients", invoice[0].company],
-            ["Reģistrācijas numurs", invoice[0].registration],
-            ["Adrese", invoice[0].adress]
+            [{ text: "Rēķina numurs", style: 'tableHeader' }, invoice[0]?.documentNr],
+            ["Rēķina datums", new Date(invoice[0]?.paytill).toLocaleDateString("de-DE")],
+            ["Rēkina apmaksas termiņš", new Date(invoice[0]?.paytill).toLocaleDateString("de-DE")],
+            ["Klients", invoice[0]?.company],
+            ["Reģistrācijas numurs", invoice[0]?.registration],
+            ["Adrese", invoice[0]?.adress]
           ]
         },
         layout: 'noBorders',
@@ -359,7 +353,7 @@ router.get("/createpdf/:selection", async (req, res) => {
           body:
             [
               ["", ""],
-              ["Summa apmaksai", Number(invoice[0].total).toFixed(2).toString() + " EUR"],
+              ["Summa apmaksai", Number(invoice[0]?.total).toFixed(2).toString() + " EUR"],
             ]
         },
         margin: [300, 20, 0, 0],
@@ -376,10 +370,10 @@ router.get("/createpdf/:selection", async (req, res) => {
           fontSize: '12px',
           headerRows: 1,
           body: [
-            ["Piegādātājs", usersetings[0].name + usersetings[0].surname],
-            ["Reģistrācijas numurs", usersetings[0].personalnr],
-            ["Adrese", usersetings[0].adress],
-            ["Bankas numurs", usersetings[0].bank]
+            ["Piegādātājs", usersetings[0]?.name + usersetings[0]?.surname],
+            ["Reģistrācijas numurs", usersetings[0]?.personalnr],
+            ["Adrese", usersetings[0]?.adress],
+            ["Bankas numurs", usersetings[0]?.bank]
           ]
         },
         layout: 'noBorders',
@@ -401,7 +395,7 @@ if(usersetings[0].file.length > 1){
 
 const pdfDoc = printer.createPdfKitDocument(docDefinition);
 res.contentType('application/pdf');
-pdfDoc.pipe(res);
+pdfDoc.pipe(res)
 pdfDoc.end();
 })
 

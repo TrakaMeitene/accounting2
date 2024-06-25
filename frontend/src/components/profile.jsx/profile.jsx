@@ -26,9 +26,10 @@ export default function Profile({ mode }) {
     const getuserdata = () => {
         axios.get(process.env.REACT_APP_API_URL + "/getuserdata", { withCredentials: true })
             .then((response) => {
+                if(response.data.length > 0){
                 setUserdata(response.data[0])
-                setImage(response.data[0].file.length >1 ? process.env.REACT_APP_API_URL +`${response.data[0].file}` : "")
-            })
+                setImage(response.data[0]?.file?.length >1 ? process.env.REACT_APP_API_URL +`${response.data[0].file}` : "")
+            }})
     }
 
     if(!userdata)
@@ -109,7 +110,8 @@ export default function Profile({ mode }) {
 
                     </div>
                     <div className="upload">
-                        <Image src={ image ? image : "broken-image.png"} alt="Image" width="100" height="80" style={{ marginRight: 20 }} preview />
+                        {image ? <Image src={ image ? image : "broken-image.png"} alt="Image" width="100" height="80" style={{ marginRight: 20 }} preview /> :                 <i className="pi pi-image mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>}
+
 
                         <div className="p-button p-component">
                             <label htmlFor="img" className="btn p-button-label">IZVĒLĒTIES FAILU</label>

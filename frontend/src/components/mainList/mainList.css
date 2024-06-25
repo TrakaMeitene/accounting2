@@ -44,10 +44,6 @@ section {
 
 }
 
-/* body {
-    height: auto;
-} */
-
 .text {
     font-family: 'Josefin Sans', sans-serif;
     font-size: 34px;
@@ -171,6 +167,15 @@ section {
     font-size: 12px;
     margin-left: 15px;
     cursor: pointer;
+}
+
+.nodata{
+    width: 100%;
+    height: 100px;
+    display:flex;
+    justify-content: center;
+    font-family: 'Josefin Sans', sans-serif;
+
 }
 
 @media screen and (max-width: 1000px) {

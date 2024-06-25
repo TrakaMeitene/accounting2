@@ -82,7 +82,7 @@ export default function MainList({ user }) {
 
 
     const handleLogout = () => {
-        axios.get(process.env.REACT_APP_API_URL + "logout", { withCredentials: true })
+        axios.get(process.env.REACT_APP_API_URL + "/logout", { withCredentials: true })
             .then(response => window.location.replace("/")
             )
     }

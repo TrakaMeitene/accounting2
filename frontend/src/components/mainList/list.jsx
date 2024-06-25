@@ -100,10 +100,11 @@ export default function List({ mode }) {
     const getpdf = (item) => {
         axios.get(process.env.REACT_APP_API_URL + `/createpdf/${item.id}`, { withCredentials: true, responseType: 'arraybuffer' })
             .then(response => {
+                console.log(response, item)
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'data.pdf');
+                link.setAttribute('download', `${item.documentNr}.pdf`);
                 document.body.appendChild(link);
                 link.click();
             })
@@ -129,7 +130,7 @@ export default function List({ mode }) {
                 <button className="new" onClick={opencraeteform}><div>+</div>Pievienot jaunu</button>
             </div>
 
-            <div className="table" >
+            {result.length > 0 ? <div className="table" >
                 {result[page]?.map((x, index) => <div className="flex" key={index}><div className={mode ? "tr" : "tr light"} onClick={() => select(x)}>
                     <span className="td" id="first">#{x.documentNr.substring(0, 10) + "..."}</span>
                     <span className="td">{moment(x.date).format("DD/MM/YYYY")}</span>
@@ -158,7 +159,8 @@ export default function List({ mode }) {
                 </div>)
                 }
 
-            </div>
+            </div> : <div className={mode ? "nodata white" : "nodata black"}>Nav datu</div>}
+
             <Paginator first={first} rows={rows} totalRecords={data.length} rowsPerPageOptions={[2, 5, 10]} onPageChange={onPageChange} id="page" className={mode ? "p-paginator" : "white-paginator"} />
             {open && <CreateForm close={closecraeteform} selection={isEdit ? selection : undefined} />}
             <Dialog  visible={visible} position={"center"} style={{ width: '50vw' }} onHide={() => { if (!visible) return; setVisible(false); }} footer={footerContent} draggable={false} resizable={false}>
