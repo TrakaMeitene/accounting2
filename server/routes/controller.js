@@ -300,7 +300,7 @@ router.delete('/deleteinvoice', async (req, res) => {
 router.get("/createpdf/:selection", async (req, res) => {
   const id = req.params.selection
   const user = req.cookies.user.userId
-
+console.log(id)
   const invoice = await pool.query('SELECT * from invoices where id=?', [id])
   const usersetings = await pool.query('SELECT * from usersettings where userid=?', [user])
   const products = await pool.query('SELECT * from products where invoiceId=?', [id])
@@ -370,10 +370,10 @@ router.get("/createpdf/:selection", async (req, res) => {
           fontSize: '12px',
           headerRows: 1,
           body: [
-            ["Piegādātājs", usersetings[0]?.name + usersetings[0]?.surname],
-            ["Reģistrācijas numurs", usersetings[0]?.personalnr],
-            ["Adrese", usersetings[0]?.adress],
-            ["Bankas numurs", usersetings[0]?.bank]
+            ["Piegādātājs", usersetings.length > 0 ? usersetings[0]?.name + usersetings[0]?.surname : ""],
+            ["Reģistrācijas numurs", usersetings.length > 0 ? usersetings[0]?.personalnr: ""],
+            ["Adrese", usersetings.length > 0 ? usersetings[0]?.adress : ""],
+            ["Bankas numurs", usersetings.length > 0 ? usersetings[0]?.bank : ""]
           ]
         },
         layout: 'noBorders',
@@ -384,7 +384,7 @@ router.get("/createpdf/:selection", async (req, res) => {
     ]
 };
 
-if(usersetings[0].file.length > 1){
+if(usersetings[0]?.file?.length > 1){
   docDefinition?.content[0].columns.push(
     {
       image:  `.${usersetings[0].file}`  ,

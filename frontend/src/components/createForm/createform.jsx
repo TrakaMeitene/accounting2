@@ -21,7 +21,7 @@ export default function CreateForm({ close, selection }) {
 
     const [hiddenindex, setHidden] = useState([])
     const [date, setDate] = useState(new Date());
-    const [datetill, setDatetill] = useState(null);
+    const [datetill, setDatetill] = useState(new Date());
     const { handleSubmit } = useForm();
     const [products, setProducts] = useState([])
     const [summ, setSumm] = useState(0.00)
@@ -42,23 +42,22 @@ export default function CreateForm({ close, selection }) {
     });
 
     useEffect(() => {
-        if (selection) {
-            init()
-        }
-    }, [])
+        if(selection){
+         init()
+         }
+    }, [selection])
 
     const init = () => {
+            axios.get(process.env.REACT_APP_API_URL + `/forminit/${selection.id}`, { withCredentials: true })
+                .then(response => {
+                    setInitdata(response.data)
+                    setDate(new Date(response.data[0].date))
+                    setDatetill(new Date(response.data[0].paytill))
+                    setPayd(response.data[0].payd)
+                    setnewproducts(response.data[1]?.length)
 
-        axios.get(process.env.REACT_APP_API_URL + `/forminit/${selection.id}`, { withCredentials: true })
-            .then(response => {
-                setInitdata(response.data)
-                setDate(new Date(response.data[0].date))
-                setDatetill(new Date(response.data[0].paytill))
-                setPayd(response.data[0].payd)
-                setnewproducts(response.data[1]?.length)
-
-                setform({ documentNr: response.data[0].documentNr, bank: response.data[0].bank, Comment: response.data[0].comments, Company: response.data[0].company, CompanyReg: response.data[0].registration, adress: response.data[0].adress, email: response.data[0].email, phone: response.data[0].phone, total: response.data[0].total })
-            })
+                    setform({ documentNr: response.data[0].documentNr, bank: response.data[0].bank, Comment: response.data[0].comments, Company: response.data[0].company, CompanyReg: response.data[0].registration, adress: response.data[0].adress, email: response.data[0].email, phone: response.data[0].phone, total: response.data[0].total })
+                })
     }
 
     const closing = (isDirty) => {
@@ -72,8 +71,7 @@ export default function CreateForm({ close, selection }) {
     const addproduct = (e) => {
         e.preventDefault()
         setnewproducts(newproducts + 1)
-        setProducts([{ "ind": newproducts + 1, "name": "", "unit": "", "count": 1, "price": 0.00 }])
-
+        setProducts([...products, { "ind": newproducts + 1, "name": "", "unit": "", "count": 1, "price": 0.00 }])
     }
 
     const removeitem = (ind) => {
@@ -115,11 +113,10 @@ export default function CreateForm({ close, selection }) {
             setProducts([{ "ind": ind, "price": price }])
         } else {
             products.forEach(x => {
-                if (x.ind === ind + 1) { 
-                    x.price = price 
+                if (x.ind === ind ) {
+                    x.price = price
                 } else {
                     setProducts(products => [...products, { "ind": ind, "price": price }])
-                    console.log(price)
                 }
             })
         }
@@ -143,7 +140,7 @@ export default function CreateForm({ close, selection }) {
             }
             )
         }
-       totalsumm()
+        totalsumm()
     }
 
     const unitchange = (unit, ind) => {
@@ -164,14 +161,13 @@ export default function CreateForm({ close, selection }) {
             )
         }
 
-       // products.forEach(x => { if (x.ind === ind) { x.unit = unit } })
-       // totalsumm()
+        // products.forEach(x => { if (x.ind === ind) { x.unit = unit } })
+        // totalsumm()
     }
 
     const totalsumm = () => {
         const unique = products.filter((a, i) => products.findIndex((s) => a.ind === s.ind) === i)
         setProducts(unique)
-
         let set = []
         for (let i = 0; i < unique.length; i++) {
             if (!unique[i].price) {
@@ -190,10 +186,9 @@ export default function CreateForm({ close, selection }) {
         }
         const summ = set.reduce((value, a) => value + a, 0.00)
         setSumm(summ)
-
     }
 
-    const update=(value)=>{
+    const updatestatus = (value) => {
         setPayd(value)
         totalsumm()
     }
@@ -221,6 +216,10 @@ export default function CreateForm({ close, selection }) {
                     closing("isDirty")
                 }
             })
+    }
+
+    const changetilldate = (e) => {
+        setDatetill(e.value)
     }
 
     return (
@@ -269,7 +268,7 @@ export default function CreateForm({ close, selection }) {
                     <div className="flex-auto">
                         <span>
                             <label htmlFor="paytill">Maksājuma termiņš</label>
-                            <Calendar id="paytill" locale="lv" value={datetill} onChange={(e) => setDatetill(e.value)} showIcon dateFormat="dd.mm.yy" />
+                            <Calendar id="paytill" locale="lv" value={datetill} onChange={changetilldate} showIcon dateFormat="dd.mm.yy" />
                         </span>
                     </div>
                     <div className="flex-row">
@@ -333,11 +332,11 @@ export default function CreateForm({ close, selection }) {
                     <div className="flex-auto row2">
                         <span className="margin">
                             <label htmlFor="payd" className="ml-2">Apmaksāts</label>
-                            <RadioButton inputId="payd" name="payd" value={0} checked={payd === 0} onChange={(e) => update(e.value)} />
+                            <RadioButton inputId="payd" name="payd" value={0} checked={payd === 0} onChange={(e) => updatestatus(e.value)} />
                         </span>
                         <span className="margin">
                             <label htmlFor="payd-not" className="ml-2">Nepmaksāts</label>
-                            <RadioButton inputId="payd-not" name="payd-not" value={1} checked={payd === 1} onChange={(e) => update(e.value)} />
+                            <RadioButton inputId="payd-not" name="payd-not" value={1} checked={payd === 1} onChange={(e) => updatestatus(e.value)} />
                         </span>
                     </div>
                     <div className="flex-row row2">

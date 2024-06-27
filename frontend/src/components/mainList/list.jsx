@@ -27,7 +27,7 @@ export default function List({ mode }) {
 
     useEffect(() => {
         getData()
-    }, [])
+    }, [visible])
 
     const getData = () => {
         axios.get(process.env.REACT_APP_API_URL + "/", { withCredentials: true })
@@ -100,7 +100,6 @@ export default function List({ mode }) {
     const getpdf = (item) => {
         axios.get(process.env.REACT_APP_API_URL + `/createpdf/${item.id}`, { withCredentials: true, responseType: 'arraybuffer' })
             .then(response => {
-                console.log(response, item)
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
@@ -132,9 +131,9 @@ export default function List({ mode }) {
 
             {result.length > 0 ? <div className="table" >
                 {result[page]?.map((x, index) => <div className="flex" key={index}><div className={mode ? "tr" : "tr light"} onClick={() => select(x)}>
-                    <span className="td" id="first">#{x.documentNr.substring(0, 10) + "..."}</span>
+                    <span className="td" id="first">#{x.documentNr.substring(0, 24) + "..."}</span>
                     <span className="td">{moment(x.date).format("DD/MM/YYYY")}</span>
-                    <span className="td">{x.company.substring(0, 10) + "..."}</span>
+                    <span className="td">{x.company.substring(0, 24) + "..."}</span>
                     <span className="td">{x.total?.toFixed(2)} <MdOutlineEuro /></span>
                     <span className="td"> <div className={x.payd === 0 ? "paid" : "pending"}>{x.payd === 0 ? "Apmaksāts" : "Neapmaksāts"}</div></span>
                     <MdOutlineNavigateNext color="#876FF3FF" size={25} className="arrow" />

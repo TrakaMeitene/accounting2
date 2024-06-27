@@ -113,7 +113,8 @@ section {
 .td {
     padding: 10px 20px;
     font-weight: 500;
-    flex: 1;
+    /* flex: 1; */
+    width: auto;
 }
 
 .table {
