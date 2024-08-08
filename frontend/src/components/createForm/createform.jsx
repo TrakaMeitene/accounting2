@@ -160,9 +160,6 @@ export default function CreateForm({ close, selection }) {
             }
             )
         }
-
-        // products.forEach(x => { if (x.ind === ind) { x.unit = unit } })
-        // totalsumm()
     }
 
     const totalsumm = () => {
@@ -193,7 +190,7 @@ export default function CreateForm({ close, selection }) {
         totalsumm()
     }
 
-    const onSubmit = (data) => {
+    const onSubmit = () => {
         for (let i = 0; i < products?.length; i++) {
             if (products[i]?.ind > initdata[1]?.length - 1) {
                 initdata[1].push(products[i])

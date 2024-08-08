@@ -73,7 +73,6 @@ function App() {
 
   return (
     <>
-
       {(!signedin & !success) ? <div className='card'>
         <img src={logo} width={300} height="auto"/>
         <form onSubmit={signin} >
