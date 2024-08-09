@@ -196,6 +196,7 @@ export default function CreateForm({ close, selection }) {
                 initdata[1].push(products[i])
             }
         }
+        console.log(forma)
         forma.products = initdata[1] ? initdata[1] : products
         forma.payd = payd
         forma.date = date
@@ -222,7 +223,7 @@ export default function CreateForm({ close, selection }) {
     return (
         <>
             <div className={anim === true ? "create out" : "create in"}>
-                <div className="createHeader" onClick={closing}> <MdOutlineNavigateNext color="#876FF3FF" size={25} className="transform" />Atpakaļ</div>
+                <Button  type="button" severity="secondary" outlined  className="createHeader" onClick={closing}> <MdOutlineNavigateNext color="#876FF3FF" size={25} className="transform" />Atpakaļ</Button>
                 <h1 className="text black">Jauns rēķins</h1>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="form" >
@@ -336,8 +337,9 @@ export default function CreateForm({ close, selection }) {
                             <RadioButton inputId="payd-not" name="payd-not" value={1} checked={payd === 1} onChange={(e) => updatestatus(e.value)} />
                         </span>
                     </div>
-                    <div className="flex-row row2">
+                    <p style={{fontStyle: "italic"}}>Lai rēķinā parādītos piedgādātāja informācija, lūdzu aizpildiet profila informāciju, spiežot uz ikonas kreisajā malā, apakšējā stūrī vai mobilajās ierīcēs augšā. </p>
 
+                    <div className="flex-row row2">
                         <Button label="IZVEIDOT" type="submit" />
                         <Button label="ATCELT" type="button" severity="secondary" outlined onClick={closing} />
                     </div>

@@ -14,3 +14,30 @@ margin-bottom:20px;
 .profile .flex-row>span{
     margin-bottom:20px;
 }
+
+.profile-form{
+    display: grid;
+    grid-template-columns: auto auto ;
+    padding: 10px;
+    grid-template-rows: auto auto auto auto auto;
+        grid-auto-flow: row dense;
+
+  }
+  .grid-item {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 150px 1fr;
+        place-self: center;
+        align-self: center;
+font-size: 18px;
+  }
+
+  .grid-item2{
+    grid-row-start: 5;
+
+  }
+
+  label{
+    place-self: center;
+
+  }

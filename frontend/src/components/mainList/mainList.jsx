@@ -19,7 +19,7 @@ import List from "./list";
 import logo from "../../assets/logosmall.png"
 import Errorpage from "../errorpage/errorpage";
 
-export default function MainList({ user }) {
+export default function MainList() {
     const [mode, setMode] = useState(true)
     const op = useRef(null);
     const [picture, setPicture] = useState("")
@@ -71,9 +71,11 @@ export default function MainList({ user }) {
     }, [mode])
 
     const getuser = () => {
+
         axios.get(process.env.REACT_APP_API_URL+"/user", { withCredentials: true })
             .then(response => setPicture(response.data))
     }
+
 
     const modechange = () => {
         setMode(!mode)
@@ -87,6 +89,7 @@ export default function MainList({ user }) {
             )
     }
 
+
     return (
         <>
             <Toast ref={toast} />
@@ -95,15 +98,14 @@ export default function MainList({ user }) {
 
                 <div className="leftContainer">
                     <div className="image">
-                        <img src={logo} width={70}/>
+                  <img src={logo} width={70} />
                     </div>
                     <div className="moon" onClick={modechange}>{mode === true ? <FaMoon color="white" size={20} /> : <IoMdSunny color="white" size={20} />}</div>
                     <Avatar image={picture} className="mr-2 signout" size="large" shape="circle" onClick={(e) => op.current.toggle(e)} />
                     <OverlayPanel ref={op}>
                         <Menu model={items} />
                     </OverlayPanel>
-
-                </div>
+                    </div>
                 <RouterProvider router={router} />
             </section>
         </>

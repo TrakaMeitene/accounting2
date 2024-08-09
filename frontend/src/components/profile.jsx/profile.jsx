@@ -72,44 +72,38 @@ export default function Profile({ mode }) {
             <Toast ref={toast} />
 
             <div className="profile">
-                <div onClick={back} className={mode ? " createHeader white" : "createHeader black"}> <MdOutlineNavigateNext color="#876FF3FF" size={25} className="transform" />Atpakaļ</div>
+                <Button type="button" severity="secondary" outlined onClick={back} className={mode ? " createHeader white" : "createHeader black"}> <MdOutlineNavigateNext color="#876FF3FF" size={25} className="transform" />Atpakaļ</Button>
 
                 <h1 className={mode ? "text white" : "text black"}>Lietotāja informācija</h1>
-                <form onSubmit={handleSubmit} >
-                    <div className="flex-row">
-                        <span>
+                <form className="profile-form" onSubmit={handleSubmit} >
+                        <span className="grid-item">
                             <label htmlFor="documentNr" className={mode ? "white" : "black"}>Lietotāja vārds</label>
                             <InputText className="p-inputtext-sm" style={{ width: 250 }} id="name" defaultValue={userdata.name} onChange={(e) => setUserdata({ ...userdata, name: e.target.value })} />
                         </span>
-                        <span>
+                        <span className="grid-item">
                             <label htmlFor="documentNr" className={mode ? "white" : "black"}>Lietotāja uzvārds</label>
                             <InputText className="p-inputtext-sm" style={{ width: 250 }} id="surname" defaultValue={userdata.surname} onChange={(e) => setUserdata({ ...userdata, surname: e.target.value })} />
                         </span>
 
-                    </div>
-                    <div className="flex-row">
-                        <span>
+                        <span className="grid-item">
                             <label htmlFor="documentNr" className={mode ? "white" : "black"} >E-pasta adrese</label>
                             <InputText className="p-inputtext-sm" style={{ width: 250 }} id="documentNr" defaultValue={userdata.email} onChange={(e) => setUserdata({ ...userdata, email: e.target.value })} />
                         </span>
-                        <span>
+                        <span className="grid-item">
                             <label htmlFor="documentNr" className={mode ? "white" : "black"}>Personas kods</label>
                             <InputText className="p-inputtext-sm" style={{ width: 250 }} id="documentNr" defaultValue={userdata.personalnr} onChange={(e) => setUserdata({ ...userdata, personalnr: e.target.value })} />
                         </span>
 
-                    </div>
-                    <div className="flex-row">
-                        <span>
+                        <span className="grid-item">
                             <label htmlFor="documentNr" className={mode ? "white" : "black"}>Adrese</label>
                             <InputText className="p-inputtext-sm" style={{ width: 250 }} id="documentNr" defaultValue={userdata.adress} onChange={(e) => setUserdata({ ...userdata, adress: e.target.value })} />
                         </span>
-                        <span>
+                        <span className="grid-item">
                             <label htmlFor="documentNr" className={mode ? "white" : "black"}>Bankas konts</label>
                             <InputText className="p-inputtext-sm" style={{ width: 250 }} id="documentNr" defaultValue={userdata.bank} onChange={(e) => setUserdata({ ...userdata, bank: e.target.value })} />
                         </span>
 
-                    </div>
-                    <div className="upload">
+                    <div className="upload grid-item">
                         {image ? <Image src={ image ? image : "broken-image.png"} alt="Image" width="100" height="80" style={{ marginRight: 20 }} preview /> :                 <i className="pi pi-image mt-3 p-5" style={{ fontSize: '5em', borderRadius: '50%', backgroundColor: 'var(--surface-b)', color: 'var(--surface-d)' }}></i>}
 
 
@@ -118,7 +112,9 @@ export default function Profile({ mode }) {
                             <input type="file" id="img" name="img" accept="image/*" onChange={handleChangeimage} hidden />
                         </div>
                     </div>
+                    <span className="grid-item2">
                     <Button label="SAGLABĀT" type="submit" />
+                    </span>
                 </form >
 
             </div>
