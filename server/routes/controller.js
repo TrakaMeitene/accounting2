@@ -185,7 +185,7 @@ router.post("/create", async (req, res) => {
       let products = ""
 
       for (let i = 0; i < data.products?.length; i++) {
-        products = await pool.query("INSERT into products (invoiceId, name, unit, price, count) values (?,?,?,?,?) ", [invoice.insertId, data.products[i].name, data.products[i].unit, data.products[i].price, data.products[i].count])
+        products = await pool.query("INSERT into products (invoiceId, name, unit, price, count) values (?,?,?,?,?) ", [invoice.insertId, data.products[i].name, data.products[i].unit, data.products[i].price || 0.00, data.products[i].count])
       }
       if (products.affectedRows > 0 || invoice.affectedRows > 0) {
         res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" })
@@ -224,6 +224,7 @@ router.post("/update", async (req, res) => {
 
     for (let i = 0; i < data.products.length; i++) {
       if (data.products[i].id) {
+       console.log( data.products[i].price)
         products = await pool.query("UPDATE products SET name=?, unit=?, price=?, count=? WHERE id=?", [data.products[i].name, data.products[i].unit, data.products[i].price, data.products[i].count, data.products[i]?.id])
       } else {
         products = await pool.query("INSERT into products (invoiceId, name, unit, price, count) values (?,?,?,?,?) ", [data.selection, data.products[i].name, data.products[i].unit, data.products[i].price, data.products[i].count])
@@ -268,7 +269,7 @@ router.post("/userdata",
    dependencies.splice(7, 0, req.file ? '/uploads/' + req.file.filename : " ", user)
 
     }
-console.log(data)
+
     const userinsert = await pool.query(`INSERT into usersettings (name, surname, email, personalnr, adress, bank, file, userid) values (?,?,?,?,?,?,?,?) `, dependencies)
     userinsert.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
   })

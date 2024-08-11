@@ -12,6 +12,7 @@ import { Tooltip } from 'primereact/tooltip';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import Errorpage from "../errorpage/errorpage";
+import { Dropdown } from 'primereact/dropdown';
 
 export default function List({ mode }) {
     const [first, setFirst] = useState(0);
@@ -24,6 +25,8 @@ export default function List({ mode }) {
     const toast = useRef(null);
     const [visible, setVisible] = useState(false);
     const [itemtoremove, setremove] = useState(0)
+    const [filtervalue, setFiltervalue] = useState(-1);
+
 
     useEffect(() => {
         getData()
@@ -56,8 +59,12 @@ export default function List({ mode }) {
             showSuccess()
         }
     }
+let set = data.filter(x=> x.payd === filtervalue ??  x.payd === filtervalue )
+    if(filtervalue == -1){
+        set = data
+    }
 
-    const result = data.reduce((resultArray, item, index) => {
+  const result = set.reduce((resultArray, item, index) => {
         const chunkIndex = Math.floor(index / rows)
 
         if (!resultArray[chunkIndex]) {
@@ -118,6 +125,8 @@ export default function List({ mode }) {
     const show = () => {
         setVisible(true);
     };
+    const options = [{name: "Apmaksāts", value: 0}, {name: "Neapmaksāts", value: 1}, {name: "Visi", value: -1}];
+
 
     return (
 
@@ -126,6 +135,8 @@ export default function List({ mode }) {
 
             <div className="header">
                 <h1 className={mode ? "text" : "text black"}>Rēķini</h1>
+            <Dropdown value={filtervalue} onChange={(e) => setFiltervalue(e.value)} options={options} optionLabel="name" 
+                placeholder="Filtrs" className="w-full md:w-8rem" />
                 <button className="new" onClick={opencraeteform}><div>+</div>Pievienot jaunu</button>
             </div>
 

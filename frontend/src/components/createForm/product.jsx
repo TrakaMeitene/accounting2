@@ -3,6 +3,7 @@ import { MdOutlineEuro } from "react-icons/md";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from 'primereact/inputnumber';
 import 'primereact/resources/primereact.min.css';
+import { Message } from 'primereact/message';
 
 export default function Product({ ind, price, count, unit, name, value, totalsummcount }) {
     const [prices, setprices] = useState(0.00)
@@ -59,7 +60,7 @@ export default function Product({ ind, price, count, unit, name, value, totalsum
                 <div className="flex-auto">
 
                     <label className="nomargin" htmlFor={"count" + ind}>Daudzums</label>
-                    <InputNumber className="p-inputtext-sm" id={"count" + ind} value={value ? value[ind]?.count : counts} locale="lv-LV" style={{ width: 80 }} onChange={(e) => countset(e.value, ind)} />
+                    <InputNumber className={`p-inputtext-sm `} id={"count" + ind} value={value ? value[ind]?.count : counts} locale="lv-LV" style={{ width: 80 }} onChange={(e) => countset(e.value, ind)} />
                 </div>
                 <div className="flex-auto">
 

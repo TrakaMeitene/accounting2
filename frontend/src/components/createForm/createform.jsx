@@ -196,7 +196,7 @@ export default function CreateForm({ close, selection }) {
                 initdata[1].push(products[i])
             }
         }
-        console.log(forma)
+
         forma.products = initdata[1] ? initdata[1] : products
         forma.payd = payd
         forma.date = date
