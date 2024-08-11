@@ -302,7 +302,7 @@ router.delete('/deleteinvoice', async (req, res) => {
 router.get("/createpdf/:selection", async (req, res) => {
   const id = req.params.selection
   const user = req.cookies.user.userId
-  console.log(id)
+
   const invoice = await pool.query('SELECT * from invoices where id=?', [id])
   const usersetings = await pool.query('SELECT * from usersettings where userid=?', [user])
   const products = await pool.query('SELECT * from products where invoiceId=?', [id])
@@ -390,7 +390,7 @@ router.get("/createpdf/:selection", async (req, res) => {
     docDefinition?.content[0].columns.push(
       {
         image: `.${usersetings[0].file}`,
-        width: 200
+        fit: [150, 150],
       }
     )
   }
