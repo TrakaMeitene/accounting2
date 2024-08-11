@@ -41,3 +41,9 @@ font-size: 18px;
     place-self: center;
 
   }
+
+  .p-inline-message-error{
+    width: 250px;
+    margin-left: 150px;
+    margin-top:5px;
+  }

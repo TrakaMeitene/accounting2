@@ -10,7 +10,7 @@ import { CgProfile } from "react-icons/cg";
 import { Menu } from 'primereact/menu';
 
 import { Toast } from 'primereact/toast';
-import Profile from "../profile.jsx/profile";
+import Profile from "../profile/profile";
 import {
     createBrowserRouter,
     RouterProvider,

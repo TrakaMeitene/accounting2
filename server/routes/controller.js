@@ -51,28 +51,28 @@ const descopeClient = DescopeClient({ projectId: process.env.PROJECTID, manageme
 router.use(bodyParser.json())
 
 router.post("/sign", async (req, res) => {
-try{
-  const loginId = req.body.email
-  const uri = process.env.HOSTNAME
-  const deliveryMethod = "email"
-  //    signUpOptions (SignUpOptions): this allows you to configure behavior during the authentication process.
-  const signUpOptions = {
-    "customClaims": { "claim": "Value1" },
-    "templateOptions": { "option": "Value1" }
-  }
-  const resp = await descopeClient.magicLink.signUpOrIn[deliveryMethod](loginId, uri, signUpOptions);
-  let data = await descopeClient.management.user.load(loginId)
+  try {
+    const loginId = req.body.email
+    const uri = process.env.HOSTNAME
+    const deliveryMethod = "email"
+    //    signUpOptions (SignUpOptions): this allows you to configure behavior during the authentication process.
+    const signUpOptions = {
+      "customClaims": { "claim": "Value1" },
+      "templateOptions": { "option": "Value1" }
+    }
+    const resp = await descopeClient.magicLink.signUpOrIn[deliveryMethod](loginId, uri, signUpOptions);
+    let data = await descopeClient.management.user.load(loginId)
 
-  if (!resp.ok) {
-    console.log("Failed to initialize signUpOrIn flow")
+    if (!resp.ok) {
+      console.log("Failed to initialize signUpOrIn flow")
+    }
+    else {
+      res.send({ message: "success", user: data.data.picture })
+    }
+  } catch (err) {
+    res.send(err)
+    console.trace(err)
   }
-  else {
-    res.send({ message: "success", user: data.data.picture })
-  }
-} catch(err){
-  res.send(err)
-  console.trace(err)
-}
 
 })
 
@@ -106,7 +106,7 @@ router.post("/socverify", async (req, res) => {
   const response = await descopeClient.oauth.exchange(code);
 
   if (!response.ok) {
-     return res.send("Failed to finish oauth")
+    return res.send("Failed to finish oauth")
   }
   else {
     res.cookie('user', response?.data?.user, { maxAge: 90000000, httpOnly: true, secure: true, sameSite: "none" })
@@ -117,29 +117,29 @@ router.post("/socverify", async (req, res) => {
 })
 
 router.post("/verify", async (req, res) => {
-  try{
-  const token = req.body.token
+  try {
+    const token = req.body.token
 
-  if (req.cookies.session) {
-    return res.send({ message: "success" })
+    if (req.cookies.session) {
+      return res.send({ message: "success" })
+    }
+
+    const resp = await descopeClient.magicLink.verify(token)
+
+    if (!resp.ok) {
+      console.log("Failed to verify magic link token")
+    }
+    else {
+      console.log("Successfully verified magic link token")
+      res.cookie('user', resp?.data?.user, { maxAge: 90000000, httpOnly: true, secure: true, sameSite: "none" })
+      res.cookie('session', resp?.data?.sessionJwt, { maxAge: 90000000, httpOnly: true, secure: true, sameSite: "none" })
+
+      res.send({ message: "success" })
+    }
   }
-
-  const resp = await descopeClient.magicLink.verify(token)
-
-  if (!resp.ok) {
-    console.log("Failed to verify magic link token")
+  catch (err) {
+    console.trace(err)
   }
-  else {
-    console.log("Successfully verified magic link token")
-    res.cookie('user', resp?.data?.user, { maxAge: 90000000, httpOnly: true, secure: true, sameSite: "none" })
-    res.cookie('session', resp?.data?.sessionJwt, { maxAge: 90000000, httpOnly: true, secure: true, sameSite: "none" })
-
-    res.send({ message: "success" })
-  }
-}
-catch(err){
-  console.trace(err)
-}
 })
 
 router.get("/", async (req, res) => {
@@ -148,7 +148,7 @@ router.get("/", async (req, res) => {
     const user = req.cookies.user?.userId
 
     const result = await pool.query('SELECT * from invoices where userId=?', [user])
-    res.send(result.sort(function(a, b){return b.date - a.date}))
+    res.send(result.sort(function (a, b) { return b.date - a.date }))
   }
   catch (err) {
     console.trace(err)
@@ -168,8 +168,8 @@ router.get("/forminit/:selection", async (req, res) => {
     res.send(result)
 
   } catch (err) {
-console.trace(err)
-res.send(err)
+    console.trace(err)
+    res.send(err)
   }
 })
 
@@ -214,7 +214,7 @@ router.post("/update", async (req, res) => {
 
     allproducts.map(x => allproductids.push(x.id))
     data.products.map(x => invoiceprod.push(x.id))
-        //check for deleted products
+    //check for deleted products
     var checkfordeleted = allproductids.filter(function (item) {
       return !invoiceprod.includes(item)
     })
@@ -244,37 +244,38 @@ router.get("/user", async (req, res) => {
   res.send(user?.picture)
 })
 
-router.post("/userdata", 
+router.post("/userdata",
   upload.single("img"), async (req, res) => {
-  
-  let errorMsg = { message: "Kaut kas nogāja greizi. Mēģini vēlreiz", status: "error" }
 
-  const user = req.cookies.user?.userId
-  const data = req.body
-  const checkifexists = await pool.query("SELECT * from usersettings where userid=?", [user])
+    let errorMsg = { message: "Kaut kas nogāja greizi. Mēģini vēlreiz", status: "error" }
 
-  let rows = "name=?, surname=?, email=?, personalnr=?, adress=?, bank=?"
-  const dependencies = [data.name, data.surname, data.email, data.personalnr, data.adress, data.bank]
+    const user = req.cookies.user?.userId
+    const data = req.body
+    const checkifexists = await pool.query("SELECT * from usersettings where userid=?", [user])
 
-  if (checkifexists.length === 1) {
-    if(req.file){
-      rows = rows.concat(", file=?")
-      dependencies.splice(6, 0, '/uploads/' + req.file?.filename)
+    let rows = "name=?, surname=?, email=?, personalnr=?, adress=?, bank=?"
+    const dependencies = [data.name, data.surname, data.email, data.personalnr, data.adress, data.bank]
+
+    if (checkifexists.length === 1) {
+      if (req.file) {
+        rows = rows.concat(", file=?")
+        dependencies.splice(6, 0, '/uploads/' + req.file?.filename)
+      }
+      const userupdate = await pool.query(`UPDATE usersettings SET ${rows}`, dependencies)
+      return userupdate.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
+
+    } else {
+   dependencies.splice(7, 0, req.file ? '/uploads/' + req.file.filename : " ", user)
+
     }
-    const userupdate = await pool.query(`UPDATE usersettings SET ${rows}`, dependencies)
-    return userupdate.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
-
-  }
-  if(req.file){
-    rows = rows.concat(", file=?, userid=?")
-    dependencies.splice(6, 0, '/uploads/' + req.file.filename, user)
-  }
-  const userinsert = await pool.query(`INSERT into usersettings (${rows}) values (?,?,?,?,?, ?,?) `, [dependencies])
-  userinsert.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
-})
+console.log(data)
+    const userinsert = await pool.query(`INSERT into usersettings (name, surname, email, personalnr, adress, bank, file, userid) values (?,?,?,?,?,?,?,?) `, dependencies)
+    userinsert.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
+  })
 
 router.get("/getuserdata", async (req, res) => {
   try {
+ 
     const user = req.cookies.user.userId
     const getuser = await pool.query("SELECT * from usersettings where userid=?", [user])
     res.send(getuser)
@@ -300,7 +301,7 @@ router.delete('/deleteinvoice', async (req, res) => {
 router.get("/createpdf/:selection", async (req, res) => {
   const id = req.params.selection
   const user = req.cookies.user.userId
-console.log(id)
+  console.log(id)
   const invoice = await pool.query('SELECT * from invoices where id=?', [id])
   const usersetings = await pool.query('SELECT * from usersettings where userid=?', [user])
   const products = await pool.query('SELECT * from products where invoiceId=?', [id])
@@ -318,8 +319,8 @@ console.log(id)
   var docDefinition = {
     content: [
       {
-      columns: [],
-    },
+        columns: [],
+      },
       {
         table: {
           widths: [200, 200],
@@ -336,7 +337,7 @@ console.log(id)
         },
         layout: 'noBorders',
         margin: [0, 20, 20, 20]
-    },
+      },
       { text: 'Produkti/pakalpojumi', fontSize: 14, normal: true, margin: [0, 20, 0, 8] },
       {
         table: {
@@ -370,8 +371,8 @@ console.log(id)
           fontSize: '12px',
           headerRows: 1,
           body: [
-            ["Piegādātājs", usersetings.length > 0 ? usersetings[0]?.name + usersetings[0]?.surname : ""],
-            ["Reģistrācijas numurs", usersetings.length > 0 ? usersetings[0]?.personalnr: ""],
+            ["Piegādātājs", usersetings.length > 0 ? usersetings[0]?.name + " " + usersetings[0]?.surname : ""],
+            ["Reģistrācijas numurs", usersetings.length > 0 ? usersetings[0]?.personalnr : ""],
             ["Adrese", usersetings.length > 0 ? usersetings[0]?.adress : ""],
             ["Bankas numurs", usersetings.length > 0 ? usersetings[0]?.bank : ""]
           ]
@@ -382,21 +383,21 @@ console.log(id)
       },
       { text: 'Dokuments ir sagatavots elektroniski un ir derīgs bez paraksta.', fontSize: 9, normal: true, margin: [0, 20, 0, 8] },
     ]
-};
+  };
 
-if(usersetings[0]?.file?.length > 1){
-  docDefinition?.content[0].columns.push(
-    {
-      image:  `.${usersetings[0].file}`  ,
-      width: 200
-    }
-  )
-}
+  if (usersetings[0]?.file?.length > 1) {
+    docDefinition?.content[0].columns.push(
+      {
+        image: `.${usersetings[0].file}`,
+        width: 200
+      }
+    )
+  }
 
-const pdfDoc = printer.createPdfKitDocument(docDefinition);
-res.contentType('application/pdf');
-pdfDoc.pipe(res)
-pdfDoc.end();
+  const pdfDoc = printer.createPdfKitDocument(docDefinition);
+  res.contentType('application/pdf');
+  pdfDoc.pipe(res)
+  pdfDoc.end();
 })
 
 router.get("/logout", async (req, res) => {
