@@ -185,7 +185,7 @@ router.post("/create", async (req, res) => {
       let products = ""
 
       for (let i = 0; i < data.products?.length; i++) {
-        products = await pool.query("INSERT into products (invoiceId, name, unit, price, count) values (?,?,?,?,?) ", [invoice.insertId, data.products[i].name, data.products[i].unit, data.products[i].price || 0.00, data.products[i].count])
+        products = await pool.query("INSERT into products (invoiceId, name, unit, price, count) values (?,?,?,?,?) ", [invoice.insertId, data.products[i].name || "", data.products[i].unit || "" , data.products[i].price || 0.00, data.products[i].count || 0])
       }
       if (products.affectedRows > 0 || invoice.affectedRows > 0) {
         res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" })
