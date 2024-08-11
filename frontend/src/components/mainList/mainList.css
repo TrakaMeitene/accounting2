@@ -118,6 +118,7 @@ section {
     font-weight: 500;
     /* flex: 1; */
     width: auto;
+    flex-basis: 100%;
 }
 .moon{
     position: absolute;
