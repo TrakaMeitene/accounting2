@@ -138,7 +138,7 @@ let set = data.filter(x=> x.payd === filtervalue ??  x.payd === filtervalue )
        <div className="flex ">
                 <button className="new" onClick={opencraeteform}><div>+</div>Pievienot jaunu</button>
                 <Dropdown value={filtervalue} onChange={(e) => setFiltervalue(e.value)} options={options} optionLabel="name" 
-                placeholder="Filtrs" className="w-full md:w-8rem" />
+                placeholder="Filtrs" className={`w-full md:w-8rem ${mode ? "text" : "text black"}`} />
                 </div>
             </div>
 

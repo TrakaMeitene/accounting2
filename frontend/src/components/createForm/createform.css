@@ -126,6 +126,11 @@ label:not(.nomargin){
 
 .inrow label, .p-inputtext-sm{
     flex-basis: 100% !important;
+    width: 90%;
+}
+
+.flex-auto{
+    display: flex;
 }
 
 
@@ -145,7 +150,18 @@ label:not(.nomargin){
     .create{
         width: 100vw;
         left: 0;
+        top: 12%;
         height: 100vh;
+    }
+label{
+    place-self:unset;
+}
+    .grid{
+        grid-template-columns: auto;
+    }
+
+    .grid .inrow{
+        padding: 0;
     }
 
     form{
@@ -177,6 +193,11 @@ label:not(.nomargin){
 .row2{
     flex-direction: row !important;
     margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.row2 p{
+    width: 90%;
 }
 
 .p-inputnumber{

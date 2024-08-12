@@ -194,10 +194,10 @@ section {
     border: 1px solid #d1d5db;
 }
 
-.p-dropdown-label {
+/* .p-dropdown-label {
 
     color: white;
-}
+} */
 
 @media screen and (max-width: 1000px) {
     .leftContainer {
@@ -213,6 +213,7 @@ section {
         width: 90vw;
         margin-top: 40px;
         font-size: 13px;
+        flex-direction: column;
     }
 
     .table {

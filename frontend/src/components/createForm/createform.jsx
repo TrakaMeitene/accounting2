@@ -247,7 +247,7 @@ export default function CreateForm({ close, selection }) {
                         </span>
                     </div>
                    
-<div className="flex">
+<div className="flex-auto inrow">
                             <label htmlFor="comment" style={{width:"170px"}}>Komentāri </label>
                             <InputText className="p-inputtext-sm" style={{ marginRight: "20px"}} id="comment" defaultValue={forma.Comment} onChange={(e) => setform({ ...forma, Comment: e.target.value })} {...register("comment")} />
                             </div>
