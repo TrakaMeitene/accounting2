@@ -51,10 +51,8 @@ export default function Product({ ind, price, count, unit, name, value, totalsum
                         id={ind ? "products.product" + ind : "products.product"} style={{ width: 280 }} value={value ? value[ind]?.name : productname} onChange={(e) => names(e.target.value, ind)} />
                 </div>
                 <div className="flex-auto">
-
-
                     <label className="nomargin" htmlFor={"price" + ind}>Cena par vienību</label>
-                    <InputNumber className="p-inputtext-sm" id={"price" + ind} value={value ? value[ind]?.price : prices} onChange={(e) => priceset(e.value, ind)} locale="lv-LV" minFractionDigits={2} min={0} currency="EUR" mode="currency" style={{ width: 100 }} />
+                    <InputNumber className="p-inputtext-sm h-[20px]" id={"price" + ind} value={value ? value[ind]?.price : prices} onChange={(e) => priceset(e.value, ind)} locale="lv-LV" minFractionDigits={2} min={0} currency="EUR" mode="currency" style={{ width: 100 }} />
                 </div>
                 <div className="flex-auto">
 

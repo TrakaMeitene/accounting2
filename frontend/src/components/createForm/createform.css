@@ -129,9 +129,14 @@ label:not(.nomargin){
     width: 90%;
 }
 
-.flex-auto{
+.flexin{
     display: flex;
+    margin-top:20px;
 }
+input#documentNr{
+   margin-right: 20px;
+}
+
 
 
 

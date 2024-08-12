@@ -229,25 +229,25 @@ export default function CreateForm({ close, selection }) {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="form" >
                     <div className="flex-row">
-                        <span className="inrow">
+                        {/* <span className="inrow"> */}
                             <label htmlFor="documentNr">Dokumenta numurs</label>
-                            <InputText className={`p-inputtext-sm ${errors.documentnr && 'p-invalid mr-2'}`} style={{ width: 200 }} id="documentNr" defaultValue={forma.documentNr} onChange={(e) => setform({ ...forma, documentNr: e.target.value })} {...register("documentnr", { required: true })} />
-                        </span>
-                        <span className="inrow">
+                            <InputText className={`p-inputtext-sm ${errors.documentnr && 'p-invalid mr-2'}`} style={{width: 100}} id="documentNr" defaultValue={forma.documentNr} onChange={(e) => setform({ ...forma, documentNr: e.target.value })} {...register("documentnr", { required: true })} />
+                        {/* </span> */}
+                        {/* <span className="inrow"> */}
                             <label htmlFor="buttondisplay" className="font-bold block mb-2">
                                 Datums
                             </label>
 
-                            <Calendar className="p-inputtext-sm" id="buttondisplay" locale="lv"
+                            <Calendar className="p-inputtext-sm" style={{width: 200}} id="buttondisplay" locale="lv"
                                 value={date}
                                 onChange={(e) => setDate(e.value)}
                                 showIcon
                                 dateFormat="dd.mm.yy"
                             />
-                        </span>
+                        {/* </span> */}
                     </div>
                    
-<div className="flex-auto inrow">
+<div className="flexin">
                             <label htmlFor="comment" style={{width:"170px"}}>Komentāri </label>
                             <InputText className="p-inputtext-sm" style={{ marginRight: "20px"}} id="comment" defaultValue={forma.Comment} onChange={(e) => setform({ ...forma, Comment: e.target.value })} {...register("comment")} />
                             </div>
@@ -321,7 +321,7 @@ export default function CreateForm({ close, selection }) {
                                 <br />
                                 <label htmlFor="total">Darījuma summa</label>
                                 <hr />
-                                <InputNumber className="p-inputtext-sm" currency="EUR" mode="currency" id="total" value={summ ? summ : forma.total} disabled />
+                                <InputNumber className="p-inputtext-sm" style={{width: 40}}currency="EUR" mode="currency" id="total" value={summ ? summ : forma.total} disabled />
                             </div>
                             <br />
                             <div className="flex-auto row2">
