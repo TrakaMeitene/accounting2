@@ -176,11 +176,11 @@ router.get("/forminit/:selection", async (req, res) => {
 router.post("/create", async (req, res) => {
   let errorMsg = { message: "Kaut kas nogāja greizi. Mēģini vēlreiz", status: "error" }
   try {
-    const data = req.body.forma
+    const data = req.body.data
     const user = req.cookies.user.userId
     //create gadijums 
     if (!data.selection) {
-      let invoice = await pool.query('INSERT into invoices ( userId, comments, company, adress, bank, date, documentNr, email, payd, paytill, phone, total, registration ) values (?, ?, ?,?,?,?,?,?,?,?,?, ?, ? )', [user, data.Comment, data.Company, data.adress, data.bank, new Date(data.date), data.documentNr, data.email, data.payd, new Date(data.paytill), data.phone, data.total, data.CompanyReg])
+      let invoice = await pool.query('INSERT into invoices ( userId, comments, company, adress, bank, date, documentNr, email, payd, paytill, phone, total, registration ) values (?, ?, ?,?,?,?,?,?,?,?,?, ?, ? )', [user, data.comment, data.company, data.adress, data.bank, new Date(data.date), data.documentnr, data.email, data.payd, new Date(data.paytill), data.phone, data.total, data.companyreg])
 
       let products = ""
 
@@ -207,7 +207,7 @@ router.post("/update", async (req, res) => {
     const user = req.cookies.user.userId
     let products = ""
 
-    const update = await pool.query("UPDATE invoices SET comments=?, company=?, adress=?, bank=?, date=?, documentNr=?, email=?, payd=?, paytill=?, phone=?, total=?, registration=?  WHERE id=?", [data.Comment, data.Company, data.adress, data.bank, new Date(data.date), data.documentNr, data.email, data.payd, new Date(data.paytill), data.phone, data.total, data.CompanyReg, data.selection])
+    const update = await pool.query("UPDATE invoices SET comments=?, company=?, adress=?, bank=?, date=?, documentNr=?, email=?, payd=?, paytill=?, phone=?, total=?, registration=?  WHERE id=?", [data.comment, data.company, data.adress, data.bank, new Date(data.date), data.documentnr, data.email, data.payd, new Date(data.paytill), data.phone, data.total, data.companyreg, data.selection])
     const allproducts = await pool.query('SELECT * from products where invoiceId=?', [data.products[0].invoiceId])
     const allproductids = []
     const invoiceprod = []

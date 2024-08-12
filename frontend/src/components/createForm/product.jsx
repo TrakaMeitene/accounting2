@@ -3,7 +3,6 @@ import { MdOutlineEuro } from "react-icons/md";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from 'primereact/inputnumber';
 import 'primereact/resources/primereact.min.css';
-import { Message } from 'primereact/message';
 
 export default function Product({ ind, price, count, unit, name, value, totalsummcount }) {
     const [prices, setprices] = useState(0.00)

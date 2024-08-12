@@ -110,6 +110,25 @@ label:not(.nomargin){
     margin-right: 20px;
 }
 
+.grid{
+    display: grid;
+    grid-template-columns: auto auto ;
+    padding: 10px;
+    grid-auto-flow: row dense;
+}
+
+.grid .inrow{
+    display: flex;
+    padding:10px;
+    
+}
+
+
+.inrow label, .p-inputtext-sm{
+    flex-basis: 100% !important;
+}
+
+
 
 @keyframes slidein {
     from {  width: 0px;}

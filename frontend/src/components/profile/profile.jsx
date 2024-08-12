@@ -7,7 +7,7 @@ import { Toast } from 'primereact/toast';
 import { Image } from 'primereact/image';
 import "./profile.css"
 import Errorpage from "../errorpage/errorpage";
-import { useForm,  useFieldArray   } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { Message } from 'primereact/message';
 
 export default function Profile({ mode}) {
