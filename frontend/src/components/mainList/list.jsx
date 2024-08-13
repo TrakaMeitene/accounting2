@@ -33,12 +33,19 @@ export default function List({ mode }) {
     }, [visible])
 
     const getData = () => {
-        axios.get(process.env.REACT_APP_API_URL + "/", { withCredentials: true })
+      axios.get(process.env.REACT_APP_API_URL + "/", { withCredentials: true })
             .then(response => setData(response.data))
     }
 
-    if(!data)
-    return <Errorpage mode={mode}/>
+    // if(!data[0])
+    // return  <div class="loader"></div> 
+   if(data.length === 0 ){
+    setTimeout(() => {
+    getData()
+}, 7000)
+return <section><div class="loader"></div></section>
+
+   }
 
     const onPageChange = (event) => {
         setFirst(event.first);
@@ -127,7 +134,7 @@ let set = data.filter(x=> x.payd === filtervalue ??  x.payd === filtervalue )
     };
     const options = [{name: "Apmaksāts", value: 0}, {name: "Neapmaksāts", value: 1}, {name: "Visi", value: -1}];
 
-
+console.log(data)
     return (
 
         <>

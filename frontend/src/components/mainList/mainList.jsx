@@ -11,14 +11,9 @@ import { Menu } from 'primereact/menu';
 
 import { Toast } from 'primereact/toast';
 import Profile from "../profile/profile";
-import {
-    createBrowserRouter,
-    RouterProvider,
-    Outlet
-} from "react-router-dom";
+
 import List from "./list";
 import logo from "../../assets/rekinilogosmall.png"
-import Errorpage from "../errorpage/errorpage";
 
 export default function MainList() {
     const [mode, setMode] = useState(false)

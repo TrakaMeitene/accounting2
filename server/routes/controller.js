@@ -153,7 +153,6 @@ router.get("/", async (req, res) => {
 
   try {
     const user = req.cookies.user?.userId
-
     const result = await pool.query('SELECT * from invoices where userId=?', [user])
     res.send(result.sort(function (a, b) { return b.date - a.date }))
   }
