@@ -70,7 +70,7 @@ export default function Profile({ mode}) {
     }
 
     const back = () => {
-        window.location.replace("/" + window.location.search)
+        window.location.replace("/list/" + window.location.search)
     }
 
     const handleChangeimage = (e) => {
@@ -80,7 +80,6 @@ export default function Profile({ mode}) {
 
     const worb = mode ? "white" : "black"
 
-    const onerror =(errors)=> { console.log(errors)}
 
     
     return (
@@ -91,7 +90,7 @@ export default function Profile({ mode}) {
                 <Button type="button" severity="secondary" outlined onClick={back} className={mode ? " createHeader white" : "createHeader black"}> <MdOutlineNavigateNext color="#876FF3FF" size={25} className="transform" />Atpakaļ</Button>
 
                 <h1 className={`${worb}`}>Lietotāja informācija</h1>
-                <form className="profile-form" onSubmit={handleSubmit(save, onerror)} >
+                <form className="profile-form" onSubmit={handleSubmit(save)} >
                         <span className="grid-item">
                             <label htmlFor="documentNr" className={`${worb} `}>Lietotāja vārds</label>
                             <InputText className={`p-inputtext-sm ${errors.name && 'p-invalid mr-2'}`}style={{ width: 250 }} id="name"  defaultValue={userdata.name}  {...register("name", { required: true})} />

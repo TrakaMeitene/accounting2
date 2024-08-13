@@ -109,10 +109,17 @@ router.post("/socverify", async (req, res) => {
     return res.send("Failed to finish oauth")
   }
   else {
+
     res.cookie('user', response?.data?.user, { maxAge: 90000000, httpOnly: true, secure: true, sameSite: "none" })
     res.cookie('session', response?.data?.sessionJwt, { maxAge: 90000000, httpOnly: true, secure: true, sameSite: "none" })
 
     res.send({ message: "success" })
+  }
+})
+
+router.get("/check", async (req, res)=>{
+  if (req.cookies.session) {
+    return res.send({ message: "success" })
   }
 })
 
@@ -224,7 +231,6 @@ router.post("/update", async (req, res) => {
 
     for (let i = 0; i < data.products.length; i++) {
       if (data.products[i].id) {
-       console.log( data.products[i].price)
         products = await pool.query("UPDATE products SET name=?, unit=?, price=?, count=? WHERE id=?", [data.products[i].name, data.products[i].unit, data.products[i].price, data.products[i].count, data.products[i]?.id])
       } else {
         products = await pool.query("INSERT into products (invoiceId, name, unit, price, count) values (?,?,?,?,?) ", [data.selection, data.products[i].name, data.products[i].unit, data.products[i].price, data.products[i].count])

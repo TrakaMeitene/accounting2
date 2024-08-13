@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import logo from "../../assets/logosmall.png"
+import logo from "../../assets/rplogo.png"
 
 export default function Errorpage({mode}) {
 
@@ -11,9 +11,9 @@ export default function Errorpage({mode}) {
         }
     })
     return (
-        <div className="flex-column">
-            {logo}
+        <setion id="home">
+            <img src={logo} alt="rēķini pats"/>
            <span className={mode ? "text" : "text black"}> Lapa, kuru meklēji neeksistē</span>
-        </div>
+           </setion>
     )
 }

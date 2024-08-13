@@ -14,31 +14,50 @@ import Profile from "../profile/profile";
 import {
     createBrowserRouter,
     RouterProvider,
+    Outlet
 } from "react-router-dom";
 import List from "./list";
 import logo from "../../assets/rekinilogosmall.png"
 import Errorpage from "../errorpage/errorpage";
 
 export default function MainList() {
-    const [mode, setMode] = useState(true)
+    const [mode, setMode] = useState(false)
     const op = useRef(null);
     const [picture, setPicture] = useState("")
+    const [signedin, setSigned] = useState(false)
 
     const toast = useRef(null);
+    const query = new URLSearchParams(window.location.search);
+    const token = query.get('t')
+    const code = query.get("code")
 
-    const router = createBrowserRouter([
-        {
-            path: "/",
-            element: <List mode={mode} />,
-            errorElement: <Errorpage mode={mode}/>
-        },
-        {
-            path: "/profile/",
-            element: <Profile mode={mode} />,
-            errorElement: <Errorpage mode={mode}/>
-        },
-    ]);
+    useEffect(() => {
+        if (token !== null) {
+            verify()
+        }
+        if (code !== null) {
+            socverify()
+        }
+        // eslint-disable-next-line
+    }, [token, code])
 
+
+    const socverify = () => {
+        const data = { "code": code }
+        axios.post(process.env.REACT_APP_API_URL + "/socverify", data, { withCredentials: true })
+            .then((response) => {
+                setSigned(true)
+            })
+    }
+
+    const verify = () => {
+        const data = { "token": token }
+
+        axios.post(process.env.REACT_APP_API_URL + "/verify", data, { withCredentials: true })
+            .then(response => setSigned(true)
+            )
+
+    }
 
 
     const items = [
@@ -61,18 +80,15 @@ export default function MainList() {
     useEffect(() => {
         if (mode) {
             document.body.style.backgroundColor = "hsl(233, 30%, 11%)"
-            // document.getElementById("page").style.backgroundColor = "hsl(236, 30%, 17%)"
         } else {
             document.body.style.backgroundColor = "hsl(252, 45%, 98%)"
-            // document.getElementById("page").style.backgroundColor = "hsl(252, 45%, 98%)"
-
         }
         getuser()
-    }, [mode])
+    }, [mode, signedin])
 
     const getuser = () => {
 
-        axios.get(process.env.REACT_APP_API_URL+"/user", { withCredentials: true })
+        axios.get(process.env.REACT_APP_API_URL + "/user", { withCredentials: true })
             .then(response => setPicture(response.data))
     }
 
@@ -89,24 +105,28 @@ export default function MainList() {
             )
     }
 
+    let render = <p></p>
+    if (window.location.pathname === "/list/") {
+        render = <List mode={mode}/>
+    } else if (window.location.pathname === "/profile/") {
+        render = <Profile mode={mode}/>
+    }
 
     return (
         <>
             <Toast ref={toast} />
-
             <section>
-
                 <div className="leftContainer">
                     <div className="image">
-                  <img src={logo} width={70} />
+                        <img src={logo} width={70} />
                     </div>
                     <div className="moon" onClick={modechange}>{mode === true ? <FaMoon color="white" size={20} /> : <IoMdSunny color="white" size={20} />}</div>
                     <Avatar image={picture} className="mr-2 signout" size="large" shape="circle" onClick={(e) => op.current.toggle(e)} />
                     <OverlayPanel ref={op}>
                         <Menu model={items} />
                     </OverlayPanel>
-                    </div>
-                <RouterProvider router={router} />
+                </div>
+                {render}
             </section>
         </>
 

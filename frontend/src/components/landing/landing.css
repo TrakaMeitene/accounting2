@@ -1,0 +1,89 @@
+#home {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+body{
+    height:auto;
+}
+
+#home {
+    background-image: url("../../assets/feathers.png");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.gradient{
+    background: -webkit-linear-gradient( #1f2038, #6366f1 );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+nav {
+    height: auto;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#home h1 {
+    font-size: 4em;
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    width: 50%;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+#home p {
+    color: gray;
+    font-size: 1.5em;
+    font-style: italic;
+}
+
+
+
+nav button {
+    height: 40px;
+}
+
+.p-button {
+    font-weight: bold;
+}
+ #about{
+height: 70vh;
+width: 100%;
+ }
+
+ .aboutboxes{
+    display:flex;
+    flex-direction: row;
+    width: 60%;
+justify-content: space-between;
+ }
+
+ .container{
+   text-align: center;
+width: 40%;
+ }
+
+ #about h2{
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 3em !important;
+    margin-bottom: 90px;
+ }
+
+ footer{
+    height: 60px;
+    text-align: center;
+ }
