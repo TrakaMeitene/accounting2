@@ -11,7 +11,7 @@ export default function Landing() {
             <section id="home">
                 <nav>
                     <img src={logo} alt="Rēķini pats " width="100px" />
-                    <Button type="button" outlined>PIESLĒGTIES</Button>
+                    <a href="/login">  <Button type="button" outlined>PIESLĒGTIES</Button></a>
                 </nav>
                 <h1> IZVEIDO <span className="gradient">RĒĶINU</span>, LEJUPIELĀDĒ, UZGLABĀ!</h1>
                 <p>Ērtākais rīks pašnodarbinātajiem rēķinu izrakstīšanai un uzglabāšanai!</p>
