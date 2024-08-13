@@ -11,7 +11,7 @@ import { Button } from 'primereact/button';
 import { FaEnvelope } from "react-icons/fa";
 import { Card } from 'primereact/card';
 import { CiFacebook } from "react-icons/ci";
-import logo from "./assets/rekinilogo.png"
+import logo from "./assets/rplogo.png"
 
 function App() {
 
@@ -74,7 +74,7 @@ function App() {
     <>
       {(!signedin & !success) ? <div className='card'>
        <img src={logo} width={300} height="auto"/>
-        <form onSubmit={signin} >
+        <form onSubmit={signin} style={{marginTop:20 }}>
         <span className="p-float-label p-input-icon-right email">
           <FaEnvelope />
           <InputText id="email" className='email' value={value} onChange={(e) => setValue(e.target.value)} />

@@ -16,7 +16,7 @@ import {
     RouterProvider,
 } from "react-router-dom";
 import List from "./list";
-import logo from "../../assets/logosmall.png"
+import logo from "../../assets/rekinilogosmall.png"
 import Errorpage from "../errorpage/errorpage";
 
 export default function MainList() {
