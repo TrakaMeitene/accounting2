@@ -210,10 +210,10 @@ router.post("/update", async (req, res) => {
   let errorMsg = { message: "Kaut kas nogāja greizi. Mēģini vēlreiz", status: "error" }
 
   try {
-    const data = req.body.forma
+    const data = req.body.data
     const user = req.cookies.user.userId
     let products = ""
-
+console.log(data)
     const update = await pool.query("UPDATE invoices SET comments=?, company=?, adress=?, bank=?, date=?, documentNr=?, email=?, payd=?, paytill=?, phone=?, total=?, registration=?  WHERE id=?", [data.comment, data.company, data.adress, data.bank, new Date(data.date), data.documentnr, data.email, data.payd, new Date(data.paytill), data.phone, data.total, data.companyreg, data.selection])
     const allproducts = await pool.query('SELECT * from products where invoiceId=?', [data.products[0].invoiceId])
     const allproductids = []
@@ -293,7 +293,7 @@ router.get("/getuserdata", async (req, res) => {
   }
 })
 
-
+//TO DO, parbauidit pec userid
 router.delete('/deleteinvoice', async (req, res) => {
   const id = req.query.itemtoremove
 

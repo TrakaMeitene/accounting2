@@ -4,7 +4,7 @@ import { InputText } from "primereact/inputtext";
 import { InputNumber } from 'primereact/inputnumber';
 import 'primereact/resources/primereact.min.css';
 
-export default function Product({ ind, price, count, unit, name, value, totalsummcount }) {
+export default function Product({ ind, price, count, unit, name, value, totalsummcount}) {
     const [prices, setprices] = useState(0.00)
     const [counts, setcounts] = useState(0)
     const [productname, setname] = useState("")
@@ -47,7 +47,7 @@ export default function Product({ ind, price, count, unit, name, value, totalsum
 
                 <div className="flex-auto">
                     <label className="nomargin" htmlFor={"products.product" + ind}>Produkta/pakalpojuma nosaukums</label>
-                    <InputText className="p-inputtext-sm"
+                    <InputText className="p-inputtext-sm" 
                         id={ind ? "products.product" + ind : "products.product"} style={{ width: 280 }} value={value ? value[ind]?.name : productname} onChange={(e) => names(e.target.value, ind)} />
                 </div>
                 <div className="flex-auto">

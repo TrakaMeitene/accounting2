@@ -196,6 +196,9 @@ export default function CreateForm({ close, selection }) {
             if (products[i]?.ind > initdata[1]?.length - 1) {
                 initdata[1].push(products[i])
             }
+            if(products[i].name === "" && products[i].price === 0 ){
+                products.splice(i, 1)
+            }
         }
 
         data.products = initdata[1] ? initdata[1] : products
