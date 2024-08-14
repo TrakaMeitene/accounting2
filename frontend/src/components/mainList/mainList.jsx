@@ -8,18 +8,27 @@ import { Avatar } from 'primereact/avatar';
 import { FiLogOut } from "react-icons/fi";
 import { CgProfile } from "react-icons/cg";
 import { Menu } from 'primereact/menu';
+import { Tooltip } from 'primereact/tooltip';
+import { InputText } from "primereact/inputtext";
+import { Button } from 'primereact/button';
+import { useForm } from "react-hook-form"
+import { IoClose } from "react-icons/io5";
 
 import { Toast } from 'primereact/toast';
 import Profile from "../profile/profile";
 
 import List from "./list";
 import logo from "../../assets/rekinilogosmall.png"
+import { FiMessageCircle } from "react-icons/fi";
+import { InputTextarea } from "primereact/inputtextarea";
 
 export default function MainList() {
     const [mode, setMode] = useState(false)
     const op = useRef(null);
     const [picture, setPicture] = useState("")
     const [signedin, setSigned] = useState(false)
+    const [openchat, setopenchat] = useState(false)
+    const { register, handleSubmit, formState: { errors }, reset } = useForm({})
 
     const toast = useRef(null);
     const query = new URLSearchParams(window.location.search);
@@ -100,9 +109,29 @@ export default function MainList() {
 
     let render = <p></p>
     if (window.location.pathname === "/list/") {
-        render = <List mode={mode} signedin={signedin}/>
+        render = <List mode={mode} signedin={signedin} />
     } else if (window.location.pathname === "/profile/") {
-        render = <Profile mode={mode}/>
+        render = <Profile mode={mode} />
+    }
+
+    const chat = () => {
+        setopenchat(true)
+    }
+
+    const sendmessage=( data)=>{
+        axios.post(process.env.REACT_APP_API_URL + "/sendmail", data, { withCredentials: true })
+        .then((response) =>  {if(response.data.message === "ok") {
+            showSuccess() 
+            reset()
+            setopenchat(false)
+        }
+        }
+        )
+
+    }
+
+    const showSuccess = () => {
+        toast.current.show({ severity: 'success', summary: 'Dati apstrādāti veiksmīgi!', life: 3000 });
     }
 
     return (
@@ -120,6 +149,20 @@ export default function MainList() {
                     </OverlayPanel>
                 </div>
                 {render}
+                <Tooltip target=".messageme" mouseTrack mouseTrackTop={45} position="top">Atradi kļūdu vai ir ieteikums ? Raksti</Tooltip>
+
+                <div className="messageme" onClick={chat}><FiMessageCircle size={25} /></div>
+               {openchat  && <div className="chat">
+                <IoClose onClick={()=> setopenchat(false)} className="close"/>
+
+                    <div className="chathead">Paldies, ka raksti. Mēs izskatīsism tavu ziņu un veiksim uzlabojumus. </div>
+                        <form className="textinput" onSubmit={handleSubmit(sendmessage)}>
+                    <InputText className="p-inputtext-sm " placeholder="E-pasts" type="email" style={{ width: 250, marginBottom: 20 }} id="email"  {...register("email")}/>
+
+                    <InputTextarea  rows={8} cols={40} {...register("text")}/>
+                    <Button type="submit" severity="primary">NOSŪTĪT</Button>
+                    </form>
+                    </div>}
             </section>
         </>
 

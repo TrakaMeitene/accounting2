@@ -12,6 +12,7 @@ var fs = require('fs');
 router.use('/uploads', express.static('uploads'))
 const multer = require("multer");
 const path = require('node:path');
+var nodemailer = require('nodemailer');
 
 
 const upload = multer({
@@ -113,7 +114,7 @@ router.post("/socverify", async (req, res) => {
   }
 })
 
-router.get("/check", async (req, res)=>{
+router.get("/check", async (req, res) => {
   if (req.cookies.session) {
     return res.send({ message: "success" })
   }
@@ -187,7 +188,7 @@ router.post("/create", async (req, res) => {
       let products = ""
 
       for (let i = 0; i < data.products?.length; i++) {
-        products = await pool.query("INSERT into products (invoiceId, name, unit, price, count) values (?,?,?,?,?) ", [invoice.insertId, data.products[i].name || "", data.products[i].unit || "" , data.products[i].price || 0.00, data.products[i].count || 0])
+        products = await pool.query("INSERT into products (invoiceId, name, unit, price, count) values (?,?,?,?,?) ", [invoice.insertId, data.products[i].name || "", data.products[i].unit || "", data.products[i].price || 0.00, data.products[i].count || 0])
       }
       if (products.affectedRows > 0 || invoice.affectedRows > 0) {
         res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" })
@@ -208,7 +209,7 @@ router.post("/update", async (req, res) => {
     const data = req.body.data
     const user = req.cookies.user.userId
     let products = ""
-console.log(data)
+    console.log(data)
     const update = await pool.query("UPDATE invoices SET comments=?, company=?, adress=?, bank=?, date=?, documentNr=?, email=?, payd=?, paytill=?, phone=?, total=?, registration=?  WHERE id=?", [data.comment, data.company, data.adress, data.bank, new Date(data.date), data.documentnr, data.email, data.payd, new Date(data.paytill), data.phone, data.total, data.companyreg, data.selection])
     const allproducts = await pool.query('SELECT * from products where invoiceId=?', [data.products[0].invoiceId])
     const allproductids = []
@@ -267,7 +268,7 @@ router.post("/userdata",
       return userupdate.affectedRows > 0 ? res.status(200).send({ message: "Dati saglabāti veiksmīgi", status: "success" }) : res.send(errorMsg)
 
     } else {
-   dependencies.splice(7, 0, req.file ? '/uploads/' + req.file.filename : " ", user)
+      dependencies.splice(7, 0, req.file ? '/uploads/' + req.file.filename : " ", user)
 
     }
 
@@ -277,7 +278,7 @@ router.post("/userdata",
 
 router.get("/getuserdata", async (req, res) => {
   try {
- 
+
     const user = req.cookies.user.userId
     const getuser = await pool.query("SELECT * from usersettings where userid=?", [user])
     res.send(getuser)
@@ -399,6 +400,47 @@ router.get("/createpdf/:selection", async (req, res) => {
   res.contentType('application/pdf');
   pdfDoc.pipe(res)
   pdfDoc.end();
+})
+
+router.post('/sendmail', async (req, res) => {
+  try {
+    let email = req.body.email
+    let text = req.body.text
+
+    let date = new Date()
+
+    var transporter = nodemailer.createTransport({
+      host: 'smtp.zoho.eu', // TO DO IELIKT PAREIZI 
+      port: '465', // TO DO IELIKT PAREIZO 
+      secure: true,
+      auth: {
+        user: 'sandra@frogit.lv', //to do ielikt pareizo
+        pass: process.env.EMAIL_PASS // to do ielikt pareizo 
+      }
+    });
+
+    var mailOptions = {
+      from: "sandra@frogit.lv", // to do ielikt pareizo 
+      to: 'sandra.jurberga@gmail.com', //TOD DO IELIKT PAREIZO 
+      subject: 'Ziņa no rēķini pats',
+      text: `
+Ziņa no ${email} : ${text}
+
+          ${date}`
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        res.send({ message: error, status: "error" })
+      } else {
+        res.send({ message: "ok" })
+      }
+    })
+  }
+  catch (err) {
+    res.status(500).send(err)
+    console.trace(err)
+  }
 })
 
 router.get("/logout", async (req, res) => {

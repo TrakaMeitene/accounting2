@@ -14,7 +14,6 @@ import { Tooltip } from 'primereact/tooltip';
 import Product from "./product";
 import axios from 'axios';
 import { useForm } from "react-hook-form"
-import { Message } from 'primereact/message';
 
 export default function CreateForm({ close, selection }) {
     const [anim, setanim] = useState(false)
@@ -232,11 +231,8 @@ export default function CreateForm({ close, selection }) {
 
                 <form onSubmit={handleSubmit(onSubmit)} className="form" >
                     <div className="flex-row">
-                        {/* <span className="inrow"> */}
                             <label htmlFor="documentNr">Dokumenta numurs</label>
                             <InputText className={`p-inputtext-sm ${errors.documentnr && 'p-invalid mr-2'}`} style={{width: 100}} id="documentNr" defaultValue={forma.documentNr} onChange={(e) => setform({ ...forma, documentNr: e.target.value })} {...register("documentnr", { required: true })} />
-                        {/* </span> */}
-                        {/* <span className="inrow"> */}
                             <label htmlFor="buttondisplay" className="font-bold block mb-2">
                                 Datums
                             </label>
@@ -247,7 +243,6 @@ export default function CreateForm({ close, selection }) {
                                 showIcon
                                 dateFormat="dd.mm.yy"
                             />
-                        {/* </span> */}
                     </div>
                    
 <div className="flexin">
