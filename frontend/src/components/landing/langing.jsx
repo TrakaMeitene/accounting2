@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import "./landing.css"
-import logo from "../../assets/rplogo.png"
+import logo from "../../assets/rplogopurple.png"
 import { Button } from 'primereact/button';
 import { FaHandHoldingHand,FaHeart} from "react-icons/fa6";
 

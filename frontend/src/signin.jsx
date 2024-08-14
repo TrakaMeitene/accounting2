@@ -6,7 +6,7 @@ import { Button } from 'primereact/button';
 import { FaEnvelope } from "react-icons/fa";
 import { Card } from 'primereact/card';
 import { CiFacebook } from "react-icons/ci";
-import logo from "./assets/rplogo.png"
+import logo from "./assets/rplogopurple.png"
 import Success from "./components/createForm/success";
 
 export default function Signin(){

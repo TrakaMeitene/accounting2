@@ -34,7 +34,7 @@ export default function MainList() {
             socverify()
         }
         // eslint-disable-next-line
-    }, [token, code])
+    }, [token, code, signedin])
 
 
     const socverify = () => {
@@ -92,8 +92,6 @@ export default function MainList() {
         setMode(!mode)
     }
 
-
-
     const handleLogout = () => {
         axios.get(process.env.REACT_APP_API_URL + "/logout", { withCredentials: true })
             .then(response => window.location.replace("/")
@@ -102,7 +100,7 @@ export default function MainList() {
 
     let render = <p></p>
     if (window.location.pathname === "/list/") {
-        render = <List mode={mode}/>
+        render = <List mode={mode} signedin={signedin}/>
     } else if (window.location.pathname === "/profile/") {
         render = <Profile mode={mode}/>
     }

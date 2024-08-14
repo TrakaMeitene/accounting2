@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import logo from "../../assets/rplogo.png"
+import logo from "../../assets/rplogopurple.png"
 
 export default function Errorpage({mode}) {
 

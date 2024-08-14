@@ -105,11 +105,7 @@ router.post("/socverify", async (req, res) => {
 
   const response = await descopeClient.oauth.exchange(code);
 
-  if (!response.ok) {
-    return res.send("Failed to finish oauth")
-  }
-  else {
-
+  if (response.ok) {
     res.cookie('user', response?.data?.user, { maxAge: 90000000, httpOnly: true, secure: true, sameSite: "none" })
     res.cookie('session', response?.data?.sessionJwt, { maxAge: 90000000, httpOnly: true, secure: true, sameSite: "none" })
 
@@ -295,7 +291,6 @@ router.get("/getuserdata", async (req, res) => {
 //TO DO, parbauidit pec userid
 router.delete('/deleteinvoice', async (req, res) => {
   const id = req.query.itemtoremove
-
   const result = await pool.query("DELETE from invoices where id=? ", [id])
   if (result.affectedRows >= 1) {
     res.send("ok")
