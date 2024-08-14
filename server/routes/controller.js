@@ -289,10 +289,10 @@ router.get("/getuserdata", async (req, res) => {
   }
 })
 
-//TO DO, parbauidit pec userid
-router.delete('/deleteinvoice', async (req, res) => {
-  const id = req.query.itemtoremove
-  const result = await pool.query("DELETE from invoices where id=? ", [id])
+router.post('/deleteinvoice', async (req, res) => {
+  const id = req.body.itemtoremove
+  const user = req.cookies.user.userId
+  const result = await pool.query("DELETE from invoices where id=? and userId=?", [id, user])
   if (result.affectedRows >= 1) {
     res.send("ok")
   } else {

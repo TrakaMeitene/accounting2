@@ -1,4 +1,4 @@
-#home {
+#home, #how {
     height: 100vh;
     width: 100vw;
     display: flex;
@@ -16,6 +16,8 @@ body{
     background-position: center;
     background-repeat: no-repeat;
 }
+
+
 
 .gradient{
     background: -webkit-linear-gradient( #1f2038, #6366f1 );
@@ -59,7 +61,7 @@ nav button {
     font-weight: bold;
 }
  #about{
-height: 70vh;
+height: 40vh;
 width: 100%;
  }
 
@@ -70,12 +72,23 @@ width: 100%;
 justify-content: space-between;
  }
 
+ .aboutboxes2{
+    display:flex;
+    flex-direction: row;
+    width: 90%;
+justify-content: space-between;
+ }
+
+ .container img:hover{
+    transform: scale(1.2);
+ }
+
  .container{
    text-align: center;
 width: 40%;
  }
 
- #about h2{
+ #about h2, #how h2{
     font-family: "Archivo Black", sans-serif;
     font-weight: 400;
     font-style: normal;
@@ -86,4 +99,19 @@ width: 40%;
  footer{
     height: 60px;
     text-align: center;
+ }
+
+ .aboutboxes2 h3{
+    text-shadow:  2px 2px white;
+ }
+
+ @media screen and (max-width: 1000px) {
+    .aboutboxes2{
+        flex-direction: column;
+    }
+
+    #how h2{
+width: 90%;
+text-align: center;
+    }
  }

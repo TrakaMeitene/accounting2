@@ -91,7 +91,7 @@ let set = data.filter(x=> x.payd === filtervalue ??  x.payd === filtervalue )
 
     const removeitem = () => {
         setVisible(false)
-        axios.delete(process.env.REACT_APP_API_URL+ "/deleteinvoice", { params: { itemtoremove } }, { withCredentials: true })
+        axios.post(process.env.REACT_APP_API_URL+ "/deleteinvoice", {itemtoremove} , { withCredentials: true })
             .then(response => {
                 if (response.data === "ok") {
                     getData()
