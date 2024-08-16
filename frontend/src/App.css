@@ -13,6 +13,10 @@ body{
   bottom: 20px;
 }
 
+.login{
+  height: 100vh;
+  justify-content: center;
+}
 .signout:hover{
 border: 3px solid #876FF3FF;
 }

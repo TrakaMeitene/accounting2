@@ -4,10 +4,10 @@ import axios from 'axios';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { FaEnvelope } from "react-icons/fa";
-import { Card } from 'primereact/card';
 import { CiFacebook } from "react-icons/ci";
 import logo from "./assets/rplogopurple.png"
 import Success from "./components/createForm/success";
+import "./App.css"
 
 export default function Signin(){
 
@@ -58,7 +58,7 @@ export default function Signin(){
 
     return(
         <>
-       {success ? <Success/> : <section>
+       {success ? <Success/> : <section className="login">
         <div className='card'>
          <img src={logo} width={300} height="auto"/>
           <form onSubmit={signin} style={{marginTop:20 }}>
