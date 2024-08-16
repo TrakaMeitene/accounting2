@@ -41,6 +41,7 @@ router.use(function (req, res, next) {
   res.header("Content-Type", "application/json");
   res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // update to match the domain you will make the request from
   res.header(`Access-Control-Allow-Origin", ${process.env.ORIGINURL}`); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Origin", process.env.ORIGINURL); // update to match the domain you will make the request from
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Authorization, Accept");
   res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
   res.header("Access-Control-Allow-Credentials", true)
