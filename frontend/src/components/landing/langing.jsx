@@ -51,7 +51,7 @@ export default function Landing() {
                         <img src={secondblock} width="80%" style={{border: "1px solid gray"}}/>
                     </div>
                     <div className="container" >
-                        <h3>Uzglabā un jelupielādē</h3>
+                        <h3>Uzglabā un lejupielādē</h3>
                         <img src={thirdblock} width="80%" style={{border: "1px solid gray"}}/>
                     </div>
                 </div>
