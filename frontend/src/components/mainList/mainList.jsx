@@ -155,7 +155,7 @@ export default function MainList() {
                {openchat  && <div className="chat">
                 <IoClose onClick={()=> setopenchat(false)} className="close"/>
 
-                    <div className="chathead">Paldies, ka raksti. Mēs izskatīsism tavu ziņu un veiksim uzlabojumus. </div>
+                    <div className="chathead">Paldies, ka raksti. Mēs izskatīsim tavu ziņu un veiksim uzlabojumus. </div>
                         <form className="textinput" onSubmit={handleSubmit(sendmessage)}>
                     <InputText className="p-inputtext-sm " placeholder="E-pasts" type="email" style={{ width: 250, marginBottom: 20 }} id="email"  {...register("email")}/>
 

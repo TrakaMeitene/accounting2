@@ -58,6 +58,7 @@ export default function Landing() {
             </section>
             <footer>
                 <p>Izstrādāja <a href="https://frogit.lv">Frogit</a> ar ❤️ 2024</p>
+                <a href="https://frogit.lv/privacy">Privātuma politika</a>
             </footer>
         </>
     )
