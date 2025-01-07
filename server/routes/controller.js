@@ -13,7 +13,7 @@ router.use('/uploads', express.static('uploads'))
 const multer = require("multer");
 const path = require('node:path');
 var nodemailer = require('nodemailer');
-
+import moment from "moment"
 
 const upload = multer({
   dest: "uploads",
@@ -209,7 +209,7 @@ router.post("/update", async (req, res) => {
     const data = req.body.data
     const user = req.cookies.user.userId
     let products = ""
-    console.log(data)
+
     const update = await pool.query("UPDATE invoices SET comments=?, company=?, adress=?, bank=?, date=?, documentNr=?, email=?, payd=?, paytill=?, phone=?, total=?, registration=?  WHERE id=?", [data.comment, data.company, data.adress, data.bank, new Date(data.date), data.documentnr, data.email, data.payd, new Date(data.paytill), data.phone, data.total, data.companyreg, data.selection])
     const allproducts = await pool.query('SELECT * from products where invoiceId=?', [data.products[0].invoiceId])
     const allproductids = []
@@ -410,18 +410,18 @@ router.post('/sendmail', async (req, res) => {
     let date = new Date()
 
     var transporter = nodemailer.createTransport({
-      host: 'smtp.zoho.eu', // TO DO IELIKT PAREIZI 
-      port: '465', // TO DO IELIKT PAREIZO 
+      host: 'smtp.zoho.eu', 
+      port: '465', 
       secure: true,
       auth: {
-        user: 'sandra@frogit.lv', //to do ielikt pareizo
-        pass: process.env.EMAIL_PASS // to do ielikt pareizo 
+        user: 'sandra@frogit.lv', 
+        pass: process.env.EMAIL_PASS 
       }
     });
 
     var mailOptions = {
-      from: "sandra@frogit.lv", // to do ielikt pareizo 
-      to: 'sandra.jurberga@gmail.com', //TOD DO IELIKT PAREIZO 
+      from: "sandra@frogit.lv", 
+      to: 'sandra@frogit.lv', 
       subject: 'Ziņa no rēķini pats',
       text: `
 Ziņa no ${email} : ${text}
@@ -442,6 +442,190 @@ Ziņa no ${email} : ${text}
     console.trace(err)
   }
 })
+
+router.get("/e-invoice/:selection",async (req, res) => {
+  const id = req.params.selection
+  const data= await pool.query('SELECT * from invoices where id=?', [id])
+  const user = req.cookies.user.userId
+
+  const usersetings = await pool.query('SELECT * from usersettings where userid=?', [user])
+  const products = await pool.query('SELECT * from products where invoiceId=?', [id])
+
+  let xmlstr= (`
+<Invoice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
+<cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+<cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
+<cbc:ID>${data[0].id}</cbc:ID>
+ <cbc:IssueDate>${data[0].date.toISOString().slice(0, 10)}</cbc:IssueDate>
+ <cbc:DueDate>${data[0].paytill.toISOString().slice(0, 10)}</cbc:DueDate> 
+<cbc:InvoiceTypeCode>219</cbc:InvoiceTypeCode>
+<cbc:Note>${data[0].comments}</cbc:Note>
+<cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+<cbc:BuyerReference>${data[0].registration}</cbc:BuyerReference>
+<cac:AccountingSupplierParty>
+<cac:Party>
+<cbc:EndpointID schemeID="9939">${data[0].registration}</cbc:EndpointID>
+<cac:PartyIdentification>
+<cbc:ID>${usersetings[0]?.personalnr}</cbc:ID>
+</cac:PartyIdentification>
+<cac:PartyName>
+<cbc:Name>${ usersetings[0]?.name + " " + usersetings[0]?.surname }</cbc:Name>
+</cac:PartyName>
+<cac:PostalAddress>
+<cbc:StreetName>${usersetings[0]?.adress}</cbc:StreetName>
+<cbc:CityName></cbc:CityName>
+<cbc:PostalZone></cbc:PostalZone>
+<cbc:CountrySubentity></cbc:CountrySubentity>
+<cac:Country>
+<cbc:IdentificationCode>LV</cbc:IdentificationCode>
+</cac:Country>
+</cac:PostalAddress>
+<cac:PartyTaxScheme>
+<cbc:CompanyID></cbc:CompanyID>
+<cac:TaxScheme>
+<cbc:ID>VAT</cbc:ID>
+</cac:TaxScheme>
+</cac:PartyTaxScheme>
+<cac:PartyLegalEntity>
+<cbc:RegistrationName>${ usersetings[0]?.name + " " + usersetings[0]?.surname }</cbc:RegistrationName>
+<cbc:CompanyID>${usersetings[0]?.personalnr}</cbc:CompanyID>
+</cac:PartyLegalEntity>
+</cac:Party>
+</cac:AccountingSupplierParty>
+<cac:AccountingCustomerParty>
+<cac:Party>
+<cbc:EndpointID schemeID="9939">${data[0].registration}</cbc:EndpointID>
+
+<cac:PartyIdentification>
+<cbc:ID>${data[0].registration}</cbc:ID>
+</cac:PartyIdentification>
+<cac:PartyName>
+<cbc:Name>${data[0].company}</cbc:Name>
+</cac:PartyName>
+<cac:PostalAddress>
+<cbc:StreetName>${data[0].adress}</cbc:StreetName>
+<cbc:CityName></cbc:CityName>
+<cbc:PostalZone></cbc:PostalZone>
+<cbc:CountrySubentity></cbc:CountrySubentity>
+<cac:Country>
+<cbc:IdentificationCode>LV</cbc:IdentificationCode>
+</cac:Country>
+</cac:PostalAddress>
+<cac:PartyTaxScheme>
+<cbc:CompanyID></cbc:CompanyID>
+<cac:TaxScheme>
+<cbc:ID>VAT</cbc:ID>
+</cac:TaxScheme>
+</cac:PartyTaxScheme>
+<cac:PartyLegalEntity>
+<cbc:RegistrationName>${data[0].company}</cbc:RegistrationName>
+<cbc:CompanyID>4${data[0].registration}</cbc:CompanyID>
+</cac:PartyLegalEntity>
+</cac:Party>
+</cac:AccountingCustomerParty>
+<cac:Delivery>
+<cbc:ActualDeliveryDate>${data[0].date.toISOString().slice(0, 10)}</cbc:ActualDeliveryDate>
+</cac:Delivery>
+<cac:PaymentMeans>
+<cbc:PaymentMeansCode>96</cbc:PaymentMeansCode>
+<cac:PayeeFinancialAccount>
+<cbc:ID>${data[0].bank}</cbc:ID>
+</cac:PayeeFinancialAccount>
+</cac:PaymentMeans>
+<cac:PaymentTerms>
+<cbc:Note>Ar pārskaitījumu</cbc:Note>
+</cac:PaymentTerms>
+<cac:AllowanceCharge>
+<cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+<cbc:AllowanceChargeReasonCode>104</cbc:AllowanceChargeReasonCode>
+<cbc:Amount currencyID="EUR">${data[0].total.toFixed(2)}</cbc:Amount>
+<cac:TaxCategory>
+<cbc:ID>E</cbc:ID>
+<cbc:Percent>0</cbc:Percent>
+<cac:TaxScheme>
+<cbc:ID>VAT</cbc:ID>
+</cac:TaxScheme>
+</cac:TaxCategory>
+</cac:AllowanceCharge>
+<cac:AllowanceCharge>
+<cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+<cbc:AllowanceChargeReasonCode>104</cbc:AllowanceChargeReasonCode>
+<cbc:Amount currencyID="EUR">0.00</cbc:Amount>
+<cac:TaxCategory>
+<cbc:ID>E</cbc:ID>
+<cbc:Percent>0</cbc:Percent>
+<cac:TaxScheme>
+<cbc:ID>VAT</cbc:ID>
+</cac:TaxScheme>
+</cac:TaxCategory>
+</cac:AllowanceCharge>
+  <cac:TaxTotal>
+<cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+
+<cac:TaxSubtotal>
+<cbc:TaxableAmount currencyID="EUR">${data[0].total.toFixed(2)}</cbc:TaxableAmount>
+<cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+<cac:TaxCategory>
+<cbc:ID>E</cbc:ID>
+
+<cbc:Percent>0</cbc:Percent>
+<cbc:TaxExemptionReason>Nav apliekams</cbc:TaxExemptionReason>
+<cac:TaxScheme>
+<cbc:ID>VAT</cbc:ID>
+</cac:TaxScheme>
+</cac:TaxCategory>
+</cac:TaxSubtotal>
+
+</cac:TaxTotal>
+<cac:LegalMonetaryTotal>
+<cbc:LineExtensionAmount currencyID="EUR">${data[0].total.toFixed(2)}</cbc:LineExtensionAmount>
+<cbc:TaxExclusiveAmount currencyID="EUR">${data[0].total.toFixed(2)}</cbc:TaxExclusiveAmount>
+<cbc:TaxInclusiveAmount currencyID="EUR">${data[0].total.toFixed(2)}</cbc:TaxInclusiveAmount>
+<cbc:AllowanceTotalAmount currencyID="EUR">0.00</cbc:AllowanceTotalAmount>
+<cbc:PrepaidAmount currencyID="EUR">0.00</cbc:PrepaidAmount>
+<cbc:PayableAmount currencyID="EUR">${data[0].total.toFixed(2)}</cbc:PayableAmount>
+</cac:LegalMonetaryTotal>
+${products.map(x=> `
+  <cac:InvoiceLine>
+<cbc:ID>${x.id}</cbc:ID>
+<cbc:Note></cbc:Note>
+<cbc:InvoicedQuantity unitCode="MTR">${x.count}</cbc:InvoicedQuantity>
+<cbc:LineExtensionAmount currencyID="EUR">${x.price}</cbc:LineExtensionAmount>
+<cac:InvoicePeriod>
+<cbc:StartDate>${data[0].date.toISOString().slice(0, 10)}</cbc:StartDate>
+<cbc:EndDate>${data[0].paytill.toISOString().slice(0, 10)}</cbc:EndDate>
+</cac:InvoicePeriod>
+<cac:AllowanceCharge>
+<cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+<cbc:AllowanceChargeReasonCode>104</cbc:AllowanceChargeReasonCode>
+<cbc:MultiplierFactorNumeric>0</cbc:MultiplierFactorNumeric>
+<cbc:Amount currencyID="EUR">0.00</cbc:Amount>
+<cbc:BaseAmount currencyID="EUR">${(x.price * x.count).toFixed(2)}</cbc:BaseAmount>
+</cac:AllowanceCharge>
+<cac:Item>
+<cbc:Name>${x.name}</cbc:Name>
+<cac:SellersItemIdentification>
+<cbc:ID>${x.id}</cbc:ID>
+</cac:SellersItemIdentification>
+<cac:ClassifiedTaxCategory>
+<cbc:ID>E</cbc:ID>
+<cbc:Percent>0</cbc:Percent>
+<cac:TaxScheme>
+<cbc:ID>VAT</cbc:ID>
+</cac:TaxScheme>
+</cac:ClassifiedTaxCategory>
+</cac:Item>
+<cac:Price>
+
+<cbc:PriceAmount currencyID="EUR">${(x.price * x.count).toFixed(2)}</cbc:PriceAmount>
+
+</cac:Price>
+</cac:InvoiceLine>
+`).join('')}
+</Invoice>
+`)
+res.send(xmlstr)
+  } )
 
 router.get("/logout", async (req, res) => {
   res.clearCookie("session")

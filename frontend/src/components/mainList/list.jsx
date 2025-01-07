@@ -12,6 +12,7 @@ import { Tooltip } from 'primereact/tooltip';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
+import { BsFiletypeXml } from "react-icons/bs";
 
 export default function List({ mode, signedin }) {
     const [first, setFirst] = useState(0);
@@ -118,6 +119,19 @@ let set = data.filter(x=> x.payd === filtervalue ??  x.payd === filtervalue )
         </div>
     );
 
+
+    const getxml = (item) => {
+        axios.get(process.env.REACT_APP_API_URL + `/e-invoice/${item.id}`, { withCredentials: true, responseType: 'arraybuffer'  })
+            .then(response => {
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `fails.xml`);
+                document.body.appendChild(link);
+                link.click();
+            })
+        }
+
     const show = () => {
         setVisible(true);
     };
@@ -150,6 +164,8 @@ let set = data.filter(x=> x.payd === filtervalue ??  x.payd === filtervalue )
                     <Tooltip target=".pdf" mouseTrack mouseTrackLeft={10}>Lejuplādēt rēķinu</Tooltip>
 
                     <GrDocumentPdf className="pdf" onClick={() => getpdf(x)} size={30} color={mode ? "white" : "black"} style={{ marginLeft: 20, cursor: "pointer" }} />
+                    {/* <BsFiletypeXml className="pdf" onClick={() => getxml(x)} size={30} color={mode ? "white" : "black"} style={{ marginLeft: 20, cursor: "pointer" }} /> */}
+
                     <Tooltip target=".delete" mouseTrack mouseTrackLeft={10}>Dzēst ierakstu</Tooltip>
 
                     <MdDelete
@@ -163,6 +179,7 @@ let set = data.filter(x=> x.payd === filtervalue ??  x.payd === filtervalue )
                         tooltip="Enter your username"
                         className="delete"
                     />
+
 
                 </div>)
                 }
