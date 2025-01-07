@@ -161,10 +161,10 @@ let set = data.filter(x=> x.payd === filtervalue ??  x.payd === filtervalue )
                     <span className="td"> <div className={x.payd === 0 ? "paid" : "pending"}>{x.payd === 0 ? "Apmaksāts" : "Neapmaksāts"}</div></span>
                     <MdOutlineNavigateNext color="#876FF3FF" size={25} className="arrow" />
                 </div>
-                    <Tooltip target=".pdf" mouseTrack mouseTrackLeft={10}>Lejuplādēt rēķinu</Tooltip>
+                    <Tooltip target=".pdf" mouseTrack mouseTrackLeft={10}>Lejupielādēt rēķinu</Tooltip>
 
                     <GrDocumentPdf className="pdf" onClick={() => getpdf(x)} size={30} color={mode ? "white" : "black"} style={{ marginLeft: 20, cursor: "pointer" }} />
-                    {/* <BsFiletypeXml className="pdf" onClick={() => getxml(x)} size={30} color={mode ? "white" : "black"} style={{ marginLeft: 20, cursor: "pointer" }} /> */}
+                    <BsFiletypeXml className="pdf" onClick={() => getxml(x)} size={30} color={mode ? "white" : "black"} style={{ marginLeft: 20, cursor: "pointer" }} />
 
                     <Tooltip target=".delete" mouseTrack mouseTrackLeft={10}>Dzēst ierakstu</Tooltip>
 

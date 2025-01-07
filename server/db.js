@@ -3,12 +3,11 @@ const require = createRequire(import.meta.url)
 const mariadb = require('mariadb');
 import 'dotenv/config'
 
-
 const pool = mariadb.createPool({
     host: process.env.DB_HOST, 
     user: process.env.DB_USER, 
     password: process.env.DB_PASSWORD,
-    //connectionLimit: 5000,
+   // connectionLimit: 5000,
     database: process.env.DB_NAME,
     acquireTimeout:600,
 });
