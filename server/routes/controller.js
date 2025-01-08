@@ -500,7 +500,7 @@ router.get("/e-invoice/:selection",async (req, res) => {
 <cbc:PaymentMeansCode>30</cbc:PaymentMeansCode>
 <cbc:PaymentID>${data[0].id}</cbc:PaymentID>
 <cac:PayeeFinancialAccount>
-<cbc:ID>${usersetings[0].bank}</cbc:ID>
+<cbc:ID>${usersetings[0]?.bank}</cbc:ID>
 </cac:PayeeFinancialAccount>
 </cac:PaymentMeans>
 <cac:TaxTotal>
